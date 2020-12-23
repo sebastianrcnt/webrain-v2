@@ -1,0 +1,36 @@
+<header class="main-header">
+  <div class="logo">
+    <h1>
+      <a href="/">MoNET <span class="name">WeBrain</span></a>
+    </h1>
+  </div>
+  <a class="mobile-only mobile-menu-trigger">
+    <i class="fas fa-bars"></i>
+  </a>
+  <nav class="menu-wrap">
+    <ul class="sub-menu">
+      {{#if loggedInUser}}
+      <li style="font-size: 1rem; font-weight: 300; color: white;">
+        {{ loggedInUser.name }} 님 반갑습니다.
+      </li>
+      {{/if}}
+      <li>
+        {{#if loggedInUser}}
+        <a style="font-size: 1rem; font-weight: 300;" href="/main/logout">로그아웃</a>
+        {{else}}
+        <a style="font-size: 1rem; font-weight: 300;" href="/main/login">로그인</a>
+        {{/if}}
+      </li>
+    </ul>
+    <ul class="main-menu">
+      <li>
+        <a href="/main/unit-projects">단위 프로젝트</a>
+      </li>
+      {{#if loggedInUser}}
+      <li>
+        <a href="/admin">관리자 페이지로 이동</a>
+      </li>
+      {{/if}}
+    </ul>
+  </nav>
+</header>
