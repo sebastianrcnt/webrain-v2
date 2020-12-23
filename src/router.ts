@@ -4,7 +4,7 @@ import express, { Router } from "express";
 import * as MainController from "./controllers/main";
 
 // restrictors
-import * as AuthorizationGates from "./middlewares/authorization-gates";
+import * as AuthorizationGates from "./gates/authorization-gates";
 
 const router: Router = express();
 
