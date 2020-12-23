@@ -11,6 +11,7 @@ export interface Project {
   name: string;
   owner: string;
   coverFileId: string;
+  projectGroupId: string;
   experiments: Experiment[];
 }
 
@@ -32,7 +33,6 @@ export interface ProjectGroup {
   id: string;
   name: string;
   description: string;
-  project: string[];
   coverFileId: string;
 }
 

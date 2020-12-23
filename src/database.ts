@@ -35,6 +35,7 @@ const database: Database = {
       id: "project1",
       name: "Project 1",
       owner: "admin@monet.com",
+      projectGroupId: "projectgroup1",
       coverFileId: "",
       experiments: [
         {
@@ -52,6 +53,14 @@ const database: Database = {
       participantEmail: "admin@monet.com",
       timestamp: 1608710095359,
       resultJson: "{}", // in json
+    },
+  ],
+  projectGroups: [
+    {
+      id: "projectgroup1",
+      name: "Project Group 1",
+      description: "this is project group 1",
+      coverFileId: "",
     },
   ],
 };
