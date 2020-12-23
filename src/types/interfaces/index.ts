@@ -32,7 +32,7 @@ export interface ProjectGroup {
   id: string;
   name: string;
   description: string;
-  Project: string[];
+  project: string[];
   coverFileId: string;
 }
 
