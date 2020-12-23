@@ -28,8 +28,17 @@ export interface Participation {
   resultJson: string;
 }
 
+export interface ProjectGroup {
+  id: string;
+  name: string;
+  description: string;
+  Project: string[];
+  coverFileId: string;
+}
+
 export interface Database {
   users: User[];
   projects: Project[];
+  projectGroups: ProjectGroup[];
   participations: Participation[];
 }
