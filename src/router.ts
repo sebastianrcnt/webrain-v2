@@ -12,8 +12,8 @@ router.get("/main/login", MainController.getLoginPage);
 router.get("/main/register", MainController.getRegisterPage);
 router.get(
   "/main",
-  AuthorizationGates.levelAuthorizationGate(0, "/main/register"),
-  MainController.getUnitProjectsPage
+  // AuthorizationGates.levelAuthorizationGate(0, "/main/login"),
+  MainController.getProjectGroupsPage
 );
 
 export default router;
