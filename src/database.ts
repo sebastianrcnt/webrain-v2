@@ -4,7 +4,7 @@ import { Database } from "./types/interfaces";
 
 // Generate Database
 const adapter = new FileSync("db.json");
-const db = low(adapter);
+const db: any = low(adapter);
 
 const database: Database = {
   users: [
@@ -60,7 +60,7 @@ const database: Database = {
       id: "projectgroup1",
       name: "Project Group 1",
       description: "this is project group 1",
-      coverFileId: "",
+      coverFileId: "up1cov.webp",
     },
   ],
 };
