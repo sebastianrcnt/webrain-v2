@@ -1,0 +1,58 @@
+{{> admin/navbar }}
+<div class="px-3">
+  <section>
+    <!-- Project -->
+    <div class="card px-3 py-3">
+      <table class="table is-fullwidth has-text-centered" id="projects-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>이름</th>
+            <th>액션</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each projectGroups as | projectGroup |}}
+          <tr>
+            <td>
+              {{projectGroup.id}}
+            </td>
+            <td>
+              {{projectGroup.name}}
+            </td>
+            <td>
+              <a href="/admin/project-groups-new/<%= unitProject.id %>" class="button is-info is-small is-centered">
+                <i class="fa fa-edit mr-1"></i>수정
+              </a>
+              <button data-project-group-id="<%= unitProject.id %>" type="button"
+                class="button delete-project-group-button is-danger is-small is-centered">
+                <i class="fa fa-trash mr-1"></i>삭제
+              </button>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+        <tfoot>
+          <a href="/admin/project-groups/new" class="button is-primary is-pulled-right mr-2 mb-6">
+            새로운 단위프로젝트
+          </a>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+</div>
+<script>
+  $(".delete-project-group-button").on("click", (event) => {
+    const unitProjectId = $(event.target).attr("data-project-group-id");
+    $.ajax({ method: "delete", url: `/admin/project-groups/${unitProjectId}` })
+      .done(() => {
+        alert("성공적으로 삭제되었습니다");
+      })
+      .fail(() => {
+        alert("삭제에 실패하였습니다");
+      })
+      .always((result) => {
+        window.location.reload();
+      });
+  });
+</script>

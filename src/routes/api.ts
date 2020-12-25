@@ -1,37 +1,32 @@
 import express, { Router } from "express";
-import { body, validationResult } from "express-validator";
+import { body } from "express-validator";
 
 // controllers
-import * as MainController from "./controllers/main";
+import * as MainController from "../controllers/main";
 
 // restrictors
-import * as AuthorizationGates from "./gates/authorization-gates";
-import errorHandler from "./middlewares/error-handler";
+import * as AuthorizationGates from "../gates/authorization-gates";
+import errorHandler from "../middlewares/error-handler";
 
-const router: Router = express();
+const ApiRouter: Router = express();
 
 // Public Router
 const PublicRouter: Router = express();
 
 // Router for Authenticated (logged in) users
 const AuthenticatedRouter: Router = express();
-AuthenticatedRouter.use(
-  AuthorizationGates.levelAuthorizationGate(0, "/main/login")
-);
+AuthenticatedRouter.use(AuthorizationGates.levelAuthorizationGate(0, "/login"));
 
 // Router for Researchers / Admin users
 const PreviligedAccessRouter: Router = express();
 PreviligedAccessRouter.use(
-  AuthorizationGates.levelAuthorizationGate(100, "/main/login")
+  AuthorizationGates.levelAuthorizationGate(100, "/login")
 );
 
-// Api Router
-const ApiRouter: Router = express();
-
-PublicRouter.get("/main/login", MainController.getLoginPage);
-PublicRouter.get("/main/register", MainController.getRegisterPage);
+PublicRouter.get("/login", MainController.getLoginPage);
+PublicRouter.get("/register", MainController.getRegisterPage);
 PublicRouter.post(
-  "/main/login",
+  "/login",
   body("email")
     .exists()
     .withMessage("이메일을 입력해주세요")
@@ -41,7 +36,7 @@ PublicRouter.post(
   MainController.loginUser
 );
 PublicRouter.post(
-  "/main/register",
+  "/register",
   body("email")
     .exists()
     .withMessage("이메일을 입력해주세요")
@@ -54,32 +49,28 @@ PublicRouter.post(
   MainController.createUser
 );
 
-AuthenticatedRouter.get("/main", MainController.getProjectGroupsPage);
+AuthenticatedRouter.get("", MainController.getProjectGroupsPage);
 AuthenticatedRouter.get(
-  "/main/project-groups/:projectGroupId",
+  "/project-groups/:projectGroupId",
   MainController.getProjectGroupPage
 );
 
+AuthenticatedRouter.get("/projects/:projectId", MainController.getProjectPage);
 AuthenticatedRouter.get(
-  "/main/projects/:projectId",
-  MainController.getProjectPage
-);
-AuthenticatedRouter.get(
-  "/main/experiments/:experimentId",
+  "/experiments/:experimentId",
   MainController.getExperimentReadyPage
 );
-AuthenticatedRouter.get("/main/logout", MainController.logoutUser);
+AuthenticatedRouter.get("/logout", MainController.logoutUser);
 
 // Admin
-router.use((req, res, next) => {
+ApiRouter.use((req, res, next) => {
   console.log(req["session"]["user"]);
   next();
 });
 
-router.use(PublicRouter);
-router.use(AuthenticatedRouter);
-router.use(PreviligedAccessRouter);
-router.use("/api", ApiRouter);
+ApiRouter.use(PublicRouter);
+ApiRouter.use(AuthenticatedRouter);
+ApiRouter.use(PreviligedAccessRouter);
 
-router.use(errorHandler);
-export default router;
+ApiRouter.use(errorHandler);
+export default ApiRouter;

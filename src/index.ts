@@ -11,8 +11,8 @@ import flash from "connect-flash";
 import exphbs from "express-handlebars";
 
 // My Modules
-import { initializeDatabase } from "./types/database";
-import router from "./router";
+import { initializeDatabase } from "./database";
+import IndexRouter from "./routes"
 
 // App Generation
 const app: express.Application = express();
@@ -64,7 +64,7 @@ app.use(function (req, res, next) {
 app.use(express.static(path.join(__dirname, "../public")));
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
-app.use(router);
+app.use(IndexRouter);
 
 const PORT = 8080;
 

@@ -1,32 +1,32 @@
-import db from "../types/database";
+import db from "../database";
 import {
   AlreadyExistsError,
   AuthorizationFailedError,
-  IdNotFoundError,
+  InvalidPrimaryKeyError,
 } from "../types/errors/database-errors";
-import { User } from "../types/interfaces/models";
+import { ModelName, PrimaryKey, User } from "../types/interfaces/models";
 
 export function getAll(): User[] {
   return db.get("users").value();
 }
 
-export function getOneById(email: string): User {
+export function getOneById(email: PrimaryKey): User {
   return db.get("users").find({ email }).value();
 }
 
-export function exists(email: string): boolean {
+export function exists(email: PrimaryKey): boolean {
   return !!getOneById(email);
 }
 
 export function create(
-  email: string,
+  email: PrimaryKey,
   name: string,
   phone: string,
   password: string,
   level: number
 ) {
   if (exists(email)) {
-    throw new AlreadyExistsError("User", email);
+    throw new AlreadyExistsError(ModelName.USER, email);
   } else {
     db.get("users")
       .push({
@@ -40,7 +40,7 @@ export function create(
   }
 }
 
-export function verify(email: string, password: string): User {
+export function verify(email: PrimaryKey, password: string): User {
   const user: User = getOneById(email);
   if (user) {
     if (user.password === password) {
@@ -51,6 +51,6 @@ export function verify(email: string, password: string): User {
       );
     }
   } else {
-    throw new IdNotFoundError("User", email);
+    throw new InvalidPrimaryKeyError(ModelName.USER, email);
   }
 }

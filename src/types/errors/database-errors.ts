@@ -1,19 +1,19 @@
-import { StatusCodes } from "../enums"
-import { CaughtError, HttpStatusCodeSpecified } from "."
-
+import { StatusCodes } from "../enums";
+import { CaughtError, HttpStatusCodeSpecified } from ".";
+import { ModelName, PrimaryKey } from "../interfaces/models";
 
 export class DatabaseError extends CaughtError {
   constructor(message: string) {
-    super(message)
+    super(message);
   }
 }
 
-export class IdNotFoundError
+export class InvalidPrimaryKeyError
   extends DatabaseError
   implements HttpStatusCodeSpecified {
   statusCode: StatusCodes = StatusCodes.NOT_FOUND;
-  constructor(model: string, id: string) {
-    super(`${model} with id ${id} is not found`)
+  constructor(modelName: ModelName, primaryKey: PrimaryKey) {
+    super(`${modelName} with primary key ${primaryKey} is not found`);
   }
 }
 
@@ -21,14 +21,14 @@ export class AlreadyExistsError
   extends DatabaseError
   implements HttpStatusCodeSpecified {
   statusCode: StatusCodes = StatusCodes.CONFLICT;
-  constructor(model: string, id: string) {
-    super(`${model} with id ${id} is not found`)
+  constructor(modelName: ModelName, primaryKey: PrimaryKey) {
+    super(`${modelName} with primary key ${primaryKey} is not found`);
   }
 }
 
 export class DatabaseCorruptionError extends DatabaseError {
   constructor(message: string) {
-    super(message)
+    super(message);
   }
 }
 
@@ -37,6 +37,12 @@ export class AuthorizationFailedError
   implements HttpStatusCodeSpecified {
   statusCode: StatusCodes = StatusCodes.UNAUTHORIZED;
   constructor(message: string) {
-    super(message)
+    super(message);
+  }
+}
+
+export class InvalidModelNameError extends DatabaseError {
+  constructor(modelName: ModelName) {
+    super(`Model Name ${modelName} doesn't exist in database`);
   }
 }

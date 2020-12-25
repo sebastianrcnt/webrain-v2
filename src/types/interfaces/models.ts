@@ -1,35 +1,55 @@
-export interface User {
-  email: string;
+import Relation from "./relations";
+
+export default interface Model {}
+
+export type PrimaryKey = string;
+
+export enum ModelName {
+  USER = "User",
+  PROJECT = "Project",
+  EXPERIMENT = "Experiment",
+  PARTICIPATION = "Participation",
+  PROJECT_GROUP = "ProjectGroup",
+}
+
+export interface User extends Model {
+  email: PrimaryKey;
   name: string;
   phone: string;
   password: string;
   level: number;
 }
 
-export interface Project {
-  id: string;
+export interface Project extends Model {
+  id: PrimaryKey;
   name: string;
-  owner: string;
   coverFileId: string;
-  projectGroupId: string;
   description: string;
   agreement: string;
+
+  // Relations
+  author: Relation<User>;
+  projectGroup: Relation<ProjectGroup>;
 }
 
-export interface Experiment {
+export interface Experiment extends Model {
   id: string;
   name: string;
   description: string;
   coverFileId: string;
-  projectId: string;
   instructionsJson: string;
+
+  // Relations
+  project: Relation<Project>;
 }
 
-export interface Participation {
-  experimentId: string;
-  participantEmail: string;
+export interface Participation extends Model {
   timestamp: number;
   resultJson: string;
+
+  // Relations
+  experiment: Relation<Experiment>;
+  participant: Relation<User>;
 }
 
 export interface ProjectGroup {
@@ -40,9 +60,9 @@ export interface ProjectGroup {
 }
 
 export interface Database {
-  users: User[];
-  projects: Project[];
-  experiments: Experiment[];
-  projectGroups: ProjectGroup[];
-  participations: Participation[];
+  User: User[];
+  Project: Project[];
+  Experiment: Experiment[];
+  ProjectGroup: ProjectGroup[];
+  Participation: Participation[];
 }

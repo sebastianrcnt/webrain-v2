@@ -3,10 +3,10 @@ import * as ProjectGroupServices from "../services/project-groups";
 import * as ProjectServices from "../services/projects";
 import * as ExperimentServices from "../services/experiments";
 import * as UsersServices from "../services/users";
-import { Experiment, Project } from "../types/interfaces/models";
+import { Experiment, ModelName, Project } from "../types/interfaces/models";
 import {
   DatabaseCorruptionError,
-  IdNotFoundError,
+  InvalidPrimaryKeyError,
   AuthorizationFailedError,
   AlreadyExistsError,
 } from "../types/errors/database-errors";
@@ -45,7 +45,7 @@ export const getProjectGroupPage: RequestHandler = (req, res) => {
       projectGroup,
     });
   } else {
-    throw new IdNotFoundError("Project Group", projectGroupId);
+    throw new InvalidPrimaryKeyError(ModelName.PROJECT_GROUP, projectGroupId);
   }
 };
 
@@ -57,7 +57,7 @@ export const getProjectPage: RequestHandler = (req, res) => {
   if (project) {
     res.render("main/pages/project", { project, experiments });
   } else {
-    throw new IdNotFoundError("Project", projectId);
+    throw new InvalidPrimaryKeyError(ModelName.PROJECT, projectId);
   }
 };
 
@@ -65,7 +65,7 @@ export const getExperimentReadyPage: RequestHandler = (req, res) => {
   const experimentId = req.params.experimentId;
   const experiment: Experiment = ExperimentServices.getOneById(experimentId);
   if (experiment) {
-    const projectId: string = experiment.projectId;
+    const projectId: string = experiment.project.primaryKey;
     const project: Project = ProjectServices.getOneById(projectId);
     if (project) {
       res.render("main/pages/experiment", { experiment, project });
@@ -75,7 +75,7 @@ export const getExperimentReadyPage: RequestHandler = (req, res) => {
       );
     }
   } else {
-    throw new IdNotFoundError("Experiment", experimentId);
+    throw new InvalidPrimaryKeyError(ModelName.EXPERIMENT, experimentId);
   }
 };
 
@@ -96,7 +96,7 @@ export const loginUser: RequestHandler = (req, res) => {
       // Fail. Reason?
       if (error instanceof AuthorizationFailedError) {
         req["flash"]("message", "비밀번호가 일치하지 않습니다");
-      } else if (error instanceof IdNotFoundError) {
+      } else if (error instanceof InvalidPrimaryKeyError) {
         req["flash"]("message", "존재하지 않는 이메일입니다");
       } else {
         throw error;

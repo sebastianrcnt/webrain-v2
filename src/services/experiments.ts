@@ -1,15 +1,19 @@
 import _ from "lodash";
-import db from "../types/database";
-import { Experiment, Project } from "../types/interfaces/models";
+import db from "../database";
+import { Experiment, PrimaryKey } from "../types/interfaces/models";
 
 export function getAll(): Experiment[] {
-  return db.get("experiments").value();
+  return db.get("Experiment").value();
 }
 
-export function getOneById(experimentId: string): Experiment {
-  return db.get("experiments").find({ id: experimentId }).value();
+export function getOneById(experimentId: PrimaryKey): Experiment {
+  return db.get("Experiment").find({ id: experimentId }).value();
 }
 
-export function getExperimentsOfProject(projectId: string): Experiment[] {
-  return db.get("experiments").filter({ projectId }).castArray().value();
+export function getExperimentsOfProject(projectId: PrimaryKey): Experiment[] {
+  return db
+    .get("Experiment")
+    .filter((experiment: Experiment) => experiment.project.primaryKey === projectId)
+    .castArray()
+    .value();
 }
