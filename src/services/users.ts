@@ -7,11 +7,11 @@ import {
 import { ModelName, PrimaryKey, User } from "../types/interfaces/models";
 
 export function getAll(): User[] {
-  return db.get("users").value();
+  return db.get(ModelName.USER).value();
 }
 
 export function getOneById(email: PrimaryKey): User {
-  return db.get("users").find({ email }).value();
+  return db.get(ModelName.USER).find({ email }).value();
 }
 
 export function exists(email: PrimaryKey): boolean {
@@ -28,7 +28,7 @@ export function create(
   if (exists(email)) {
     throw new AlreadyExistsError(ModelName.USER, email);
   } else {
-    db.get("users")
+    db.get(ModelName.USER)
       .push({
         email,
         name,
@@ -42,6 +42,7 @@ export function create(
 
 export function verify(email: PrimaryKey, password: string): User {
   const user: User = getOneById(email);
+  console.log({ user });
   if (user) {
     if (user.password === password) {
       return user;
