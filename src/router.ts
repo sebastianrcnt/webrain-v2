@@ -25,6 +25,9 @@ PreviligedAccessRouter.use(
   AuthorizationGates.levelAuthorizationGate(100, "/main/login")
 );
 
+// Api Router
+const ApiRouter: Router = express();
+
 PublicRouter.get("/main/login", MainController.getLoginPage);
 PublicRouter.get("/main/register", MainController.getRegisterPage);
 PublicRouter.post(
@@ -72,9 +75,11 @@ router.use((req, res, next) => {
   console.log(req["session"]["user"]);
   next();
 });
+
 router.use(PublicRouter);
 router.use(AuthenticatedRouter);
 router.use(PreviligedAccessRouter);
+router.use("/api", ApiRouter);
 
 router.use(errorHandler);
 export default router;
