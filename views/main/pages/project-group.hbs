@@ -1,0 +1,42 @@
+<div class="wrap-all">
+  <link rel="stylesheet" href="/css/list2.css" />
+  {{> header }}
+  <!-- Games -->
+  <section class="list-content-section">
+    <div class="list-content-header">
+      <h2><span>MoNET</span>Projects</h2>
+    </div>
+    <style>
+      .image-container img {
+        object-fit: contain;
+      }
+    </style>
+    <div class="list-content-container">
+      <h3>
+        <i class="fas fa-list"></i>
+        {{ projectGroup.name }}({{ projectGroup.id }})
+      </h3>
+      <ul class="list-content-thumbnail">
+        {{#each projects as | project |}}
+        <li>
+          <a href="/main/projects/{{ project.id }}" class="list-link">
+            <span class="image-container">
+              <img src="/uploads/{{ project.coverFileId }}" alt="이미지를 업로드하세요" />
+            </span>
+            <span class="list-content-thumbnail-title">
+              <span class="item-title">
+                {{ project.name }}
+              </span>
+              <span class="item-text">
+                {{ project.description }}
+              </span>
+            </span>
+          </a>
+        </li>
+        {{/each}}
+      </ul>
+    </div>
+  </section>
+  <!-- login contents end -->
+  {{> footer}}
+</div>

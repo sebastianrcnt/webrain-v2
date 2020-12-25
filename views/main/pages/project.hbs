@@ -1,0 +1,95 @@
+<link rel="stylesheet" href="/css/list2.css" />
+
+<div class="wrap-all">
+  {{> header}}
+  <!-- Experiments -->
+  <section class="list-content-section">
+    <div class="list-content-header">
+      <h2><span>MoNET</span>Experiment</h2>
+    </div>
+    <style>
+      .image-container img {
+        object-fit: contain;
+      }
+    </style>
+    <div class="list-content-container">
+      <h3><i class="fas fa-list"></i>전체 리스트</h3>
+      <ul class="list-content-thumbnail">
+        {{#each experiments as | experiment | }}
+        <li>
+          <a href="/main/experiments/{{ experiment.id }}" class="list-link">
+            <span class="image-container">
+              <img src="/uploads/{{ experiment.coverFileId }}" alt="any" />
+            </span>
+            <span class="list-content-thumbnail-title">
+              <span class="item-title">
+                {{ experiment.name }}
+              </span>
+              <span class="item-text">
+                {{ experiment.description }}
+              </span>
+            </span>
+          </a>
+        </li>
+        {{/each}}
+      </ul>
+
+      <div class="image-cover">
+        <div class="image-cover-content">
+          <span class="title"></span>
+          <span class="icon"><i class="fa fa-search"></i></span>
+        </div>
+      </div>
+
+      <div class="list-content-done-not-done">
+        <div class="not-done">
+          <h3><i class="fas fa-seedling"></i>미완료 게임</h3>
+          <ul class="list-content-thumbnail">
+            <li>
+              <a href="/main/experiments/<%= experiments.id %>" class="list-link">
+                <span class="list-content-thumbnail-title">
+                  <span class="item-title">
+                    <%= experiments.Experiment.name %>
+                  </span>
+                  <span class="item-text">
+                    <%= experiments.Project.name %>
+                  </span>
+                </span>
+                <span class="image-container">
+                  <img src="/uploads/<%= experiments.Experiment.coverFileId %>" alt="any" />
+                </span>
+              </a>
+              <span class="icon-container">
+                <a href="#"><i class="fas fa-caret-square-right"></i></a>
+              </span>
+            </li>
+          </ul>
+        </div>
+        <div class="done">
+          <h3><i class="fas fa-award"></i>완료 게임</h3>
+          <ul class="list-content-thumbnail">
+            <li>
+              <a href="/main/experiments/<%= experiments.id %>" class="list-link">
+                <span class="list-content-thumbnail-title">
+                  <span class="item-title">
+                    <%= experiments.Experiment.name %>
+                  </span>
+                  <span class="item-text">
+                    <%= experiments.Project.name %>
+                  </span>
+                </span>
+                <span class="image-container">
+                  <img src="/uploads/<%= experiments.Experiment.coverFileId %>" alt="any" />
+                </span>
+              </a>
+              <span class="icon-container">
+                <a href="#"><i class="fas fa-caret-square-right"></i></a>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+  {{> footer}}
+</div>

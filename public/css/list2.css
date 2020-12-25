@@ -122,7 +122,7 @@
 .list-content-thumbnail li > a > .image-container {
   width: inherit;
   overflow: hidden;
-  height: inherit;
+  /* height: inherit; */
 }
 
 .image-container > img:hover {

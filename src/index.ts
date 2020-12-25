@@ -9,7 +9,7 @@ import cookieParser from "cookie-parser";
 import exphbs from "express-handlebars";
 
 // My Modules
-import { initializeDatabase } from "./database";
+import { initializeDatabase } from "./types/database";
 import router from "./router";
 
 // App Generation

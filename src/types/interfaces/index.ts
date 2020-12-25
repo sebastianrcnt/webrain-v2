@@ -12,13 +12,16 @@ export interface Project {
   owner: string;
   coverFileId: string;
   projectGroupId: string;
-  experiments: Experiment[];
+  description: string;
+  agreement: string;
 }
 
 export interface Experiment {
   id: string;
+  name: string;
   description: string;
   coverFileId: string;
+  projectId: string;
   instructionsJson: string;
 }
 
@@ -39,6 +42,7 @@ export interface ProjectGroup {
 export interface Database {
   users: User[];
   projects: Project[];
+  experiments: Experiment[];
   projectGroups: ProjectGroup[];
   participations: Participation[];
 }

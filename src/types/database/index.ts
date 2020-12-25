@@ -1,6 +1,6 @@
 import low from "lowdb";
 import FileSync from "lowdb/adapters/FileSync";
-import { Database } from "./types/interfaces";
+import { Database } from "../interfaces";
 
 // Generate Database
 const adapter = new FileSync("db.json");
@@ -35,16 +35,36 @@ const database: Database = {
       id: "project1",
       name: "Project 1",
       owner: "admin@monet.com",
+      description: "this is project 1",
+      agreement: "do you agree?",
       projectGroupId: "projectgroup1",
-      coverFileId: "",
-      experiments: [
-        {
-          id: "experiment1",
-          description: "Experiment 1",
-          coverFileId: "",
-          instructionsJson: "",
-        },
-      ],
+      coverFileId: "p1cov.webp",
+    },
+  ],
+  experiments: [
+    {
+      id: "experiment1",
+      name: "Experiment 1",
+      description: "This is Experiment 1",
+      projectId: "project1",
+      coverFileId: "e1.webp",
+      instructionsJson: "",
+    },
+    {
+      id: "experiment2",
+      name: "Experiment 2",
+      description: "This is Experiment 2",
+      projectId: "project1",
+      coverFileId: "e2.webp",
+      instructionsJson: "",
+    },
+    {
+      id: "experiment3",
+      name: "Experiment 3",
+      description: "This is Experiment 3",
+      projectId: "project1",
+      coverFileId: "e3.webp",
+      instructionsJson: "",
     },
   ],
   participations: [
