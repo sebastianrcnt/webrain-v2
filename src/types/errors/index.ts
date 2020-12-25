@@ -25,5 +25,3 @@ export abstract class CaughtError extends ExtendableError {
     super(message);
   }
 }
-
-

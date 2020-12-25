@@ -13,7 +13,9 @@ export function getOneById(experimentId: PrimaryKey): Experiment {
 export function getExperimentsOfProject(projectId: PrimaryKey): Experiment[] {
   return db
     .get("Experiment")
-    .filter((experiment: Experiment) => experiment.project.primaryKey === projectId)
+    .filter(
+      (experiment: Experiment) => experiment.project.primaryKey === projectId
+    )
     .castArray()
     .value();
 }

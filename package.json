@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "tsc && node dist/"
+    "start": "tsc && node dist/",
+    "format": "prettier --check ./src"
   },
   "author": "",
   "license": "ISC",
@@ -26,6 +27,7 @@
     "lowdb": "^1.0.0",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.6",
+    "prettier": "^2.2.1",
     "shortid": "^2.2.16"
   }
 }

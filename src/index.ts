@@ -12,7 +12,7 @@ import exphbs from "express-handlebars";
 
 // My Modules
 import { initializeDatabase } from "./database";
-import IndexRouter from "./routes"
+import IndexRouter from "./routes";
 
 // App Generation
 const app: express.Application = express();
@@ -31,10 +31,9 @@ const handlebars = exphbs.create({
   helpers: {
     isLargeOrEqualTo(x1, x2) {
       return x1 >= x2;
-    }
-  }
+    },
+  },
 });
-
 
 app.engine("hbs", handlebars.engine);
 app.set("view engine", "hbs");

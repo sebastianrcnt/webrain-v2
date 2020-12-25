@@ -1,4 +1,8 @@
-import Model, { Database, ModelName, PrimaryKey } from "../types/interfaces/models";
+import Model, {
+  Database,
+  ModelName,
+  PrimaryKey,
+} from "../types/interfaces/models";
 import db from "../database";
 import Relation from "../types/interfaces/relations";
 
@@ -13,7 +17,10 @@ export default function cascadeDatabase(
       (document: Model) => {
         for (let fieldName in document) {
           const field: Relation<Model> = document[fieldName];
-          if (field.model === targetModelName && field.primaryKey === primaryKey) {
+          if (
+            field.model === targetModelName &&
+            field.primaryKey === primaryKey
+          ) {
             return false;
           }
         }

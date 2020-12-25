@@ -2,7 +2,11 @@ import shortid from "shortid";
 
 import db from "../database";
 import { InvalidPrimaryKeyError } from "../types/errors/database-errors";
-import { ModelName, PrimaryKey, ProjectGroup } from "../types/interfaces/models";
+import {
+  ModelName,
+  PrimaryKey,
+  ProjectGroup,
+} from "../types/interfaces/models";
 import cascadeDatabase from "./cascade";
 
 export function getAll(): ProjectGroup[] {

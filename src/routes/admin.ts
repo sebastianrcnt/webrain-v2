@@ -12,6 +12,6 @@ const AdminRouter: Router = express();
 
 // Public Users
 // TODO: restrict other users
-AdminRouter.get("/", AdminControllers.getProjectGroupsPage)
+AdminRouter.get("/", AdminControllers.getProjectGroupsPage);
 AdminRouter.use(errorHandler);
 export default AdminRouter;

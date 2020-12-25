@@ -13,7 +13,12 @@ export class BadRequestError
   }
 
   public format(): string {
-    const errors: any[] = this.validationResult['errors'];
-    return errors.map((error: ValidationError) => `[${error.msg}] - Validation Failed On Value ${error.value} of Param ${error.param} at ${error.location}`).join('\n')
+    const errors: any[] = this.validationResult["errors"];
+    return errors
+      .map(
+        (error: ValidationError) =>
+          `[${error.msg}] - Validation Failed On Value ${error.value} of Param ${error.param} at ${error.location}`
+      )
+      .join("\n");
   }
 }
