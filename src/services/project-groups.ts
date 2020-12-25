@@ -1,5 +1,5 @@
 import db from "../types/database";
-import { ProjectGroup } from "../types/interfaces";
+import { ProjectGroup } from "../types/interfaces/models";
 
 export function getAll(): ProjectGroup[] {
   return db.get("projectGroups").value();

@@ -3,6 +3,51 @@
 {{>head }}
 
 <body>
+  {{#if flash}}
+  <div class="alert-container">
+    <div class="custom-alert">
+      <span>{{ flash }}</span>
+      <div class="close btn">닫기</div>
+    </div>
+  </div>
+  <script>
+    setTimeout(() => {
+      $('.alert-container').remove();
+    }, 3000)
+    $('.close').on('click', () => {
+      $('.alert-container').remove();
+    })
+  </script>
+  <style>
+    .alert-container {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .custom-alert {
+      width: 80%;
+      min-width: 200px;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      background: white;
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    .custom-alert span {
+
+    }
+  </style>
+  {{/if}}
   {{{ body }}}
 </body>
 

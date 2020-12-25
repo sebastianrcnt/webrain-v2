@@ -9,13 +9,13 @@
   </a>
   <nav class="menu-wrap">
     <ul class="sub-menu">
-      {{#if loggedInUser}}
+      {{#if req.session.user }}
       <li style="font-size: 1rem; font-weight: 300; color: white;">
-        {{ loggedInUser.name }} 님 반갑습니다.
+        {{ req.session.user.name }} 님 반갑습니다.
       </li>
       {{/if}}
       <li>
-        {{#if loggedInUser}}
+        {{#if req.session.user }}
         <a style="font-size: 1rem; font-weight: 300;" href="/main/logout">로그아웃</a>
         {{else}}
         <a style="font-size: 1rem; font-weight: 300;" href="/main/login">로그인</a>
@@ -26,7 +26,7 @@
       <li>
         <a href="/main">단위 프로젝트</a>
       </li>
-      {{#if loggedInUser}}
+      {{#if (isLargeOrEqualTo req.session.user.level 100) }}
       <li>
         <a href="/admin">관리자 페이지로 이동</a>
       </li>

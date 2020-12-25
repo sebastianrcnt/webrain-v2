@@ -2,9 +2,9 @@ import db from "../types/database";
 import {
   AlreadyExistsError,
   AuthorizationFailedError,
-  IdNotFoundError
-} from "../types/errors/database-errors"
-import { User } from "../types/interfaces";
+  IdNotFoundError,
+} from "../types/errors/database-errors";
+import { User } from "../types/interfaces/models";
 
 export function getAll(): User[] {
   return db.get("users").value();
@@ -23,7 +23,7 @@ export function create(
   name: string,
   phone: string,
   password: string,
-  level: string
+  level: number
 ) {
   if (exists(email)) {
     throw new AlreadyExistsError("User", email);

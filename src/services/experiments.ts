@@ -1,6 +1,6 @@
 import _ from "lodash";
 import db from "../types/database";
-import { Experiment, Project } from "../types/interfaces";
+import { Experiment, Project } from "../types/interfaces/models";
 
 export function getAll(): Experiment[] {
   return db.get("experiments").value();

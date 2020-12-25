@@ -1,6 +1,6 @@
 import low from "lowdb";
 import FileSync from "lowdb/adapters/FileSync";
-import { Database } from "../interfaces";
+import { Database } from "../interfaces/models";
 
 // Generate Database
 const adapter = new FileSync("db.json");

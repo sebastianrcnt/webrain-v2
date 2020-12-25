@@ -1,5 +1,5 @@
 import db from "../types/database";
-import { Project } from "../types/interfaces";
+import { Project } from "../types/interfaces/models";
 
 export function getAll(): Project[] {
   return db.get("projects").value();
