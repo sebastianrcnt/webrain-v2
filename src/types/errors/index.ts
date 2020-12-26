@@ -36,7 +36,7 @@ export abstract class HttpException extends Exception {
   }
 }
 
-export class SyncHttpException extends HttpException {
+export class HttpExceptionSync extends HttpException {
   redirectionUrl: string;
   constructor(
     message: string,
@@ -50,7 +50,7 @@ export class SyncHttpException extends HttpException {
   }
 }
 
-export class AsyncHttpException extends HttpException {
+export class HttpExceptionAsync extends HttpException {
   constructor(
     message: string,
     statusCode: StatusCodes,
@@ -58,5 +58,17 @@ export class AsyncHttpException extends HttpException {
   ) {
     super(message, statusCode);
     this.validationResult = validationResult;
+  }
+}
+
+export class UnimplementedExceptionAsync extends HttpExceptionAsync {
+  constructor() {
+    super("Unimplemented Feature", StatusCodes.NOT_IMPLEMENTED);
+  }
+}
+
+export class UnimplementedExceptionSync extends HttpExceptionAsync {
+  constructor() {
+    super("Unimplemented Feature", StatusCodes.NOT_IMPLEMENTED);
   }
 }

@@ -125,6 +125,7 @@ export async function initializeDatabase() {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
+      useFindAndModify: true,
     })
     .then(() => {
       console.log("👌  Successfully Connected To Database");

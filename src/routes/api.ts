@@ -6,7 +6,7 @@ import * as ApiControllers from "../controllers/api";
 
 // restrictors
 import * as AuthorizationGates from "../gates/authorization-gates";
-import errorHandler from "../middlewares/error-handler";
+import asyncHandler from "../utils/async-handler";
 
 const ApiRouter: Router = express();
 
@@ -16,12 +16,11 @@ ApiRouter.get(
   "/projects/assign-project-group",
   query("projectId").exists(),
   query("projectGroupId").exists(),
-  ApiControllers.assignProjectGroup
+  asyncHandler(ApiControllers.assignProjectGroup)
 ).get(
   "/projects/disassign-project-group",
   query("projectId").exists(),
   query("projectGroupId").exists(),
-  ApiControllers.disassignProjectGroup
+  asyncHandler(ApiControllers.disassignProjectGroup)
 );
-ApiRouter.use(errorHandler);
 export default ApiRouter;

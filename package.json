@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start": "tsc && node dist/",
-    "format": "prettier --check ./src"
+    "format": "prettier --check ./src",
+    "reset": "ts-node src/database/reset.ts"
   },
   "author": "",
   "license": "ISC",

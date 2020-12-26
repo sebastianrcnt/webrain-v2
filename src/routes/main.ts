@@ -6,7 +6,7 @@ import * as MainControllers from "../controllers/main";
 
 // restrictors
 import * as AuthorizationGates from "../gates/authorization-gates";
-import errorHandler from "../middlewares/error-handler";
+import asyncHandler from "../utils/async-handler";
 
 const MainRouter: Router = express();
 
@@ -21,7 +21,7 @@ MainRouter.get("/login", MainControllers.getLoginPage)
       .isEmail()
       .withMessage("이메일의 형식을 지켜주세요"),
     body("password").exists().withMessage("비밀번호를 입력해주세요"),
-    MainControllers.loginUser
+    asyncHandler(MainControllers.loginUser)
   )
   .post(
     "/register",
@@ -34,16 +34,21 @@ MainRouter.get("/login", MainControllers.getLoginPage)
     body("password2").exists().withMessage("비밀번호 확인을 입력해주세요"),
     body("name").exists().withMessage("이름을 입력해주세요"),
     body("phone").exists().withMessage("휴대폰 번호를 입력해주세요"),
-    MainControllers.createUser
+    asyncHandler(MainControllers.createUser)
   );
 
 // Only For Authenticated Users
 MainRouter.use(AuthorizationGates.levelAuthorizationGate(0, "/main/login"))
-  .get("/", MainControllers.getProjectGroupsPage)
-  .get("/project-groups/:projectGroupId", MainControllers.getProjectGroupPage)
-  .get("/projects/:projectId", MainControllers.getProjectPage)
-  .get("/experiments/:experimentId", MainControllers.getExperimentReadyPage)
-  .get("/logout", MainControllers.logoutUser);
+  .get("/", asyncHandler(MainControllers.getProjectGroupsPage))
+  .get(
+    "/project-groups/:projectGroupId",
+    asyncHandler(MainControllers.getProjectGroupPage)
+  )
+  .get("/projects/:projectId", asyncHandler(MainControllers.getProjectPage))
+  .get(
+    "/experiments/:experimentId",
+    asyncHandler(MainControllers.getExperimentReadyPage)
+  )
+  .get("/logout", asyncHandler(MainControllers.logoutUser));
 
-MainRouter.use(errorHandler);
 export default MainRouter;
