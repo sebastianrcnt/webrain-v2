@@ -17,7 +17,7 @@ import { SyncHttpException } from "../types/errors";
 import {
   RequestWithSession,
   ResponseWithSession,
-} from "../types/interfaces/request";
+} from "../types/interfaces/session";
 import sendMessageWithRedirectionUrl from "../utils/redirect";
 
 // Getters
@@ -102,7 +102,7 @@ export const loginUser = async (
   const result = validationResult(req);
   if (result.isEmpty()) {
     const { email, password } = req.body;
-    const user = await UserModel.findOne({ email, password });
+    const user = (await UserModel.findOne({ email, password })) as IUser;
     if (user) {
       req.session.user = user;
       res.redirect("/main");
@@ -147,7 +147,7 @@ export const logoutUser = (
   req: RequestWithSession,
   res: ResponseWithSession
 ) => {
-  req.session.destroy((error) => {
+  req.session.destroy((error: Error) => {
     if (error) {
       throw error;
     } else {
