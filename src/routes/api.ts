@@ -12,18 +12,16 @@ const ApiRouter: Router = express();
 
 // Public Users
 // TODO: restrict other users
-ApiRouter.get("/projects", ApiControllers.getProjects)
-  .get(
-    "/projects/assign-project-group",
-    query("projectId").exists(),
-    query("projectGroupId").exists(),
-    ApiControllers.assignProjectGroup
-  )
-  .get(
-    "/projects/disassign-project-group",
-    query("projectId").exists(),
-    query("projectGroupId").exists(),
-    ApiControllers.disassignProjectGroup
-  );
+ApiRouter.get(
+  "/projects/assign-project-group",
+  query("projectId").exists(),
+  query("projectGroupId").exists(),
+  ApiControllers.assignProjectGroup
+).get(
+  "/projects/disassign-project-group",
+  query("projectId").exists(),
+  query("projectGroupId").exists(),
+  ApiControllers.disassignProjectGroup
+);
 ApiRouter.use(apiErrorHandler);
 export default ApiRouter;

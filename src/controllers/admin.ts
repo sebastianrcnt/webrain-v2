@@ -27,11 +27,13 @@ export const getProjectGroupPage: RequestHandler = (req, res) => {
       "/admin/project-groups"
     );
   }
-  const projects: Project[] = ProjectServices.getAllByProjectGroupId(
+  const assignedProjects: Project[] = ProjectServices.getAllByProjectGroupId(
     projectGroupId
   );
+  const projects: Project[] = ProjectServices.getAll();
   res.render("admin/pages/project-group", {
     layout: "admin",
+    assignedProjects,
     projectGroup,
     projects,
   });

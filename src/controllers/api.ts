@@ -25,9 +25,9 @@ export const assignProjectGroup: RequestHandler = (req, res) => {
         projectGroupId as PrimaryKey
       )
     ) {
-      res.status(200).send()
+      res.status(200).send();
     } else {
-      res.status(400).send()
+      res.status(400).send();
     }
   } else {
     throw new ApiValidationException("Validation Failed", result);
@@ -44,9 +44,9 @@ export const disassignProjectGroup: RequestHandler = (req, res) => {
         projectGroupId as PrimaryKey
       )
     ) {
-      res.status(200).send()
+      res.status(200).send();
     } else {
-      res.status(400).send()
+      res.status(400).send();
     }
   } else {
     throw new ApiValidationException("Validation Failed", result);

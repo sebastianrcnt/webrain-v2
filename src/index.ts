@@ -19,7 +19,7 @@ import IndexRouter from "./routes";
 const app: express.Application = express();
 
 // configue dotenv
-dotenv.config()
+dotenv.config();
 
 // Database Generation
 initializeDatabase();
