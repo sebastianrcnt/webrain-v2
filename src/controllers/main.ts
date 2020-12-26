@@ -1,139 +1,157 @@
 import { request, RequestHandler } from "express";
-import * as ProjectGroupServices from "../services/project-groups";
-import * as ProjectServices from "../services/projects";
-import * as ExperimentServices from "../services/experiments";
-import * as UsersServices from "../services/users";
-import { Experiment, ModelName, Project } from "../types/interfaces/models";
-import {
-  DatabaseAssertionFailureException,
-  PrimaryKeyNotFoundException,
-  ValidationFailureException,
-} from "../types/errors";
 import { validationResult } from "express-validator";
+import {
+  ExperimentModel,
+  IExperiment,
+  IProject,
+  IProjectGroup,
+  IUser,
+  IUserCreation,
+  ProjectGroupModel,
+  ProjectModel,
+  UserModel,
+  UserSchema,
+} from "../database";
+import { StatusCodes } from "../types/enums";
+import { SyncHttpException } from "../types/errors";
+import {
+  RequestWithSession,
+  ResponseWithSession,
+} from "../types/interfaces/request";
+import sendMessageWithRedirectionUrl from "../utils/redirect";
 
 // Getters
 export const getLoginPage: RequestHandler = (req, res) => {
-  res.render("main/pages/login.hbs", {
-    loggedInUser: false,
-    flash: req["flash"] ? req["flash"]("message") : null,
-  });
+  res.render("main/pages/login.hbs", {});
 };
 
 export const getRegisterPage: RequestHandler = (req, res) => {
-  res.render("main/pages/register.hbs", {
-    flash: req["flash"] ? req["flash"]("message") : null,
-  });
+  res.render("main/pages/register.hbs", {});
 };
 
-export const getProjectGroupsPage: RequestHandler = (req, res) => {
+export const getProjectGroupsPage: RequestHandler = async (req, res) => {
   res.render("main/pages/project-groups", {
-    projectGroups: ProjectGroupServices.getAll(),
+    projectGroups: await ProjectGroupModel.find({}),
   });
 };
 
-export const getProjectGroupPage: RequestHandler = (req, res) => {
-  const projectGroupId = req.params.projectGroupId;
-  const projectGroup = ProjectGroupServices.getOneById(projectGroupId);
-  const projects = ProjectServices.getAllByProjectGroupId(projectGroupId);
-  console.log({ projects });
-
+export const getProjectGroupPage: RequestHandler = async (req, res) => {
+  const projectGroupId: string = req.params.projectGroupId;
+  const projectGroup: IProjectGroup = (await ProjectGroupModel.findOne({
+    id: projectGroupId,
+  })) as IProjectGroup;
+  const projects: IProject[] = (await ProjectModel.find({
+    projectGroup: projectGroup._id,
+  })) as IProject[];
   if (projectGroup) {
     res.render("main/pages/project-group", {
       projects,
       projectGroup,
     });
   } else {
-    throw new PrimaryKeyNotFoundException(
+    throw new SyncHttpException(
       `해당 id를 가진 프로젝트 그룹을 찾지 못했습니다`,
-      ModelName.PROJECT_GROUP,
-      projectGroupId,
+      StatusCodes.NOT_FOUND,
       "/main/project-groups"
     );
   }
 };
 
-export const getProjectPage: RequestHandler = (req, res) => {
-  const projectId = req.params.projectId;
-  let project = ProjectServices.getOneById(projectId);
-  let experiments = ExperimentServices.getExperimentsOfProject(projectId);
+export const getProjectPage: RequestHandler = async (req, res) => {
+  const projectId: string = req.params.projectId;
+  let project: IProject = (await ProjectModel.findOne({
+    id: projectId,
+  })) as IProject;
+  let experiments = (await ExperimentModel.find({
+    project: project._id,
+  })) as IExperiment[];
 
   if (project) {
     res.render("main/pages/project", { project, experiments });
   } else {
-    throw new PrimaryKeyNotFoundException(
+    throw new SyncHttpException(
       `해당 id를 가진 프로젝트를 찾지 못했습니다`,
-      ModelName.PROJECT,
-      projectId,
+      StatusCodes.NOT_FOUND,
       "/main/project-groups"
     );
   }
 };
 
-export const getExperimentReadyPage: RequestHandler = (req, res) => {
-  const experimentId = req.params.experimentId;
-  const experiment: Experiment = ExperimentServices.getOneById(experimentId);
-  if (experiment) {
-    const projectId: string = experiment.project.primaryKey;
-    const project: Project = ProjectServices.getOneById(projectId);
-    if (project) {
-      res.render("main/pages/experiment", { experiment, project });
-    } else {
-      throw new DatabaseAssertionFailureException(
-        `Experiment ${experiment.id} has invalid Project id: ${project.id}`
-      );
-    }
+export const getExperimentReadyPage: RequestHandler = async (req, res) => {
+  const experimentId: string = req.params.experimentId;
+  const experiment: IExperiment = (await ExperimentModel.findOne({
+    id: experimentId,
+  }).populate("project")) as IExperiment;
+
+  const project: IProject = experiment.project;
+  if (experiment && project) {
+    res.render("main/pages/experiment", { experiment, project });
   } else {
-    throw new PrimaryKeyNotFoundException(
+    throw new SyncHttpException(
       `해당 id를 가진 실험을 찾지 못했습니다`,
-      ModelName.EXPERIMENT,
-      experimentId,
+      StatusCodes.NOT_FOUND,
       "/main/project-groups"
     );
   }
 };
 
-export const loginUser: RequestHandler = (req, res) => {
+export const loginUser = async (
+  req: RequestWithSession,
+  res: ResponseWithSession
+) => {
   const result = validationResult(req);
   if (result.isEmpty()) {
     const { email, password } = req.body;
-    const user = UsersServices.verify(email, password);
-    req["session"]["user"] = user;
-    res.redirect("/main");
+    const user = await UserModel.findOne({ email, password });
+    if (user) {
+      req.session.user = user;
+      res.redirect("/main");
+    }
   } else {
-    throw new ValidationFailureException(
+    throw new SyncHttpException(
       "올바른 요청이 아닙니다",
-      result,
+      StatusCodes.BAD_REQUEST,
       "/main/login"
     );
   }
 };
 
-export const createUser: RequestHandler = (req, res) => {
+export const createUser = async (
+  req: RequestWithSession,
+  res: ResponseWithSession
+) => {
   const { email, password, password2, name, phone } = req.body;
   const result = validationResult(req);
   if (result.isEmpty()) {
-    UsersServices.create(email, name, phone, password, 0);
-    req["flash"]("message", "회원가입이 성공적으로 완료되었습니다");
-    res.redirect("/main/login");
+    if (password !== password2) {
+      throw new SyncHttpException(
+        "확인 비밀번호가 서로 일치하지 않습니다",
+        StatusCodes.BAD_REQUEST,
+        "/main/register"
+      );
+    }
+
+    const userCreation: IUserCreation = { email, password, name, phone };
+    await UserModel["register"](userCreation);
+    sendMessageWithRedirectionUrl(res, "회원가입이 완료되었습니다", "/main/");
   } else {
-    throw new ValidationFailureException(
+    throw new SyncHttpException(
       "올바른 요청이 아닙니다",
-      result,
+      StatusCodes.BAD_REQUEST,
       "/main/register"
     );
   }
 };
 
-export const logoutUser: RequestHandler = (req, res) => {
-  req["session"].destroy((error) => {
+export const logoutUser = (
+  req: RequestWithSession,
+  res: ResponseWithSession
+) => {
+  req.session.destroy((error) => {
     if (error) {
       throw error;
     } else {
       res.redirect("/main/login");
     }
   });
-};
-
-export const flash: RequestHandler = (req, res) => {
-  res.render("utils/message", { message: req["flash"]("message") });
 };

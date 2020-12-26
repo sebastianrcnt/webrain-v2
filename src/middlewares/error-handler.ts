@@ -1,18 +1,20 @@
-import { ErrorRequestHandler } from "express";
-import { format } from "path";
 import { StatusCodes } from "../types/enums";
 import {
-  ApiException,
-  ApiValidationException,
+  AsyncHttpException,
   Exception,
-  ExternalException,
-  InternalException,
+  SyncHttpException,
 } from "../types/errors";
+import keygen from "../utils/keygen";
 
 const debug = process.env.DEBUG === "TRUE";
 
 const errorHandler = (err, req, res, next) => {
   const statusCode: StatusCodes = err["statusCode"] || 500;
+  let reportId = keygen();
+  if (err instanceof Exception) {
+    reportId = err.id;
+  }
+  // Todo Incidence Report
   console.log(err);
   if (debug) {
     debugErrorHandler(err, req, res, statusCode);
@@ -23,42 +25,37 @@ const errorHandler = (err, req, res, next) => {
 
 function debugErrorHandler(err, req, res, statusCode) {
   if (err instanceof Exception) {
-    res.status(statusCode).render("error", {
-      stack: err.stack,
-      message: err.message,
-      layout: "admin",
-    });
+    if (err instanceof SyncHttpException) {
+      res.status(statusCode).render("error", {
+        stack: err.stack,
+        message: err.message,
+        layout: "admin",
+      });
+    } else if (err instanceof AsyncHttpException) {
+      res.status(statusCode).send(err);
+    }
   } else {
-    res.status(statusCode).render("error", {
-      stack: err.stack,
-      message: "확인되지 않은 오류입니다",
-      layout: "admin",
-    });
+    res.status(statusCode).json(err);
   }
 }
 
 function normalErrorHandler(err, req, res, statusCode) {
-  if (err instanceof InternalException) {
-    res.status(statusCode).render("message", {
-      layout: "admin",
-      message: "오류가 발생했습니다",
-    });
-  } else if (err instanceof ExternalException) {
-    res.status(statusCode).render("message-with-link", {
-      layout: "admin",
-      message: err.clientMessage,
-      link: err.redirectionUrl,
-    });
+  if (err instanceof Exception) {
+    if (err instanceof SyncHttpException) {
+      res.status(statusCode).render("message-with-link", {
+        layout: "admin",
+        message: err.message,
+        link: err.redirectionUrl,
+      });
+    } else if (err instanceof AsyncHttpException) {
+      res.status(statusCode).render("message", {
+        layout: "admin",
+        message: "오류가 발생했습니다",
+      });
+    }
   } else {
-    res.status(statusCode).render("message", {
-      layout: "admin",
-      message: "알 수 없는 오류가 발생했습니다",
-    });
+    res.status(statusCode).json(err);
   }
 }
-
-export const apiErrorHandler = (err, req, res, next) => {
-  res.status(500).json(err);
-};
 
 export default errorHandler;
