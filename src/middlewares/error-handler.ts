@@ -1,18 +1,28 @@
 import { ErrorRequestHandler } from "express";
 import { format } from "path";
-import { CaughtError } from "../types/errors";
-import { BadRequestError } from "../types/errors/validation-errors";
+import { StatusCodes } from "../types/enums";
+import {
+  ApiException,
+  ApiValidationException,
+  Exception,
+  ExternalException,
+  InternalException,
+} from "../types/errors";
+
+const debug = process.env.DEBUG === "TRUE";
 
 const errorHandler = (err, req, res, next) => {
-  const statusCode = err["statusCode"] || 500;
+  const statusCode: StatusCodes = err["statusCode"] || 500;
   console.log(err);
-  if (err instanceof BadRequestError) {
-    res.status(statusCode).render("error", {
-      stack: err.format(),
-      message: err.message,
-      layout: "admin",
-    });
-  } else if (err instanceof CaughtError) {
+  if (debug) {
+    debugErrorHandler(err, req, res, statusCode);
+  } else {
+    normalErrorHandler(err, req, res, statusCode);
+  }
+};
+
+function debugErrorHandler(err, req, res, statusCode) {
+  if (err instanceof Exception) {
     res.status(statusCode).render("error", {
       stack: err.stack,
       message: err.message,
@@ -25,6 +35,30 @@ const errorHandler = (err, req, res, next) => {
       layout: "admin",
     });
   }
+}
+
+function normalErrorHandler(err, req, res, statusCode) {
+  if (err instanceof InternalException) {
+    res.status(statusCode).render("message", {
+      layout: "admin",
+      message: "오류가 발생했습니다",
+    });
+  } else if (err instanceof ExternalException) {
+    res.status(statusCode).render("message-with-link", {
+      layout: "admin",
+      message: err.clientMessage,
+      link: err.redirectionUrl,
+    });
+  } else {
+    res.status(statusCode).render("message", {
+      layout: "admin",
+      message: "알 수 없는 오류가 발생했습니다",
+    });
+  }
+}
+
+export const apiErrorHandler = (err, req, res, next) => {
+  res.status(500).json(err);
 };
 
 export default errorHandler;

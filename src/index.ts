@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import flash from "connect-flash";
 import exphbs from "express-handlebars";
+import dotenv from "dotenv";
 
 // My Modules
 import { initializeDatabase } from "./database";
@@ -16,6 +17,9 @@ import IndexRouter from "./routes";
 
 // App Generation
 const app: express.Application = express();
+
+// configue dotenv
+dotenv.config()
 
 // Database Generation
 initializeDatabase();

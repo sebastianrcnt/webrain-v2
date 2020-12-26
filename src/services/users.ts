@@ -1,10 +1,9 @@
 import db from "../database";
-import {
-  AlreadyExistsError,
-  AuthorizationFailedError,
-  InvalidPrimaryKeyError,
-} from "../types/errors/database-errors";
+import { InternalException } from "../types/errors";
 import { ModelName, PrimaryKey, User } from "../types/interfaces/models";
+
+export class EmailAlreadyExistsException extends InternalException {}
+export class PasswordMismatchException extends InternalException {}
 
 export function getAll(): User[] {
   return db.get(ModelName.USER).value();
@@ -26,7 +25,7 @@ export function create(
   level: number
 ) {
   if (exists(email)) {
-    throw new AlreadyExistsError(ModelName.USER, email);
+    throw new EmailAlreadyExistsException(email);
   } else {
     db.get(ModelName.USER)
       .push({
@@ -42,16 +41,13 @@ export function create(
 
 export function verify(email: PrimaryKey, password: string): User {
   const user: User = getOneById(email);
-  console.log({ user });
   if (user) {
     if (user.password === password) {
       return user;
     } else {
-      throw new AuthorizationFailedError(
-        `Authorization Failed for User ${email}: Wrong Password`
-      );
+      throw new PasswordMismatchException(password);
     }
   } else {
-    throw new InvalidPrimaryKeyError(ModelName.USER, email);
+    throw new EmailAlreadyExistsException(email);
   }
 }

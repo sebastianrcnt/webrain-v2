@@ -1,12 +1,11 @@
-import shortid from "shortid";
-
 import db from "../database";
-import { InvalidPrimaryKeyError } from "../types/errors/database-errors";
+import { PrimaryKeyNotFoundException } from "../types/errors";
 import {
   ModelName,
   PrimaryKey,
   ProjectGroup,
 } from "../types/interfaces/models";
+import keygen from "../utils/keygen";
 import cascadeDatabase from "./cascade";
 
 export function getAll(): ProjectGroup[] {
@@ -21,13 +20,12 @@ export function exists(projectGroupId: PrimaryKey): boolean {
   return !!getOneById(projectGroupId);
 }
 
-export function remove(projectGroupId: PrimaryKey) {
+export function remove(projectGroupId: PrimaryKey): PrimaryKey {
   const projectGroup: ProjectGroup = getOneById(projectGroupId);
   if (projectGroup) {
     db.get(ModelName.PROJECT_GROUP).remove({ id: projectGroupId }).write();
     cascadeDatabase(ModelName.PROJECT_GROUP, projectGroupId);
-  } else {
-    throw new InvalidPrimaryKeyError(ModelName.PROJECT_GROUP, projectGroupId);
+    return projectGroupId;
   }
 }
 
@@ -35,8 +33,8 @@ export function create(
   name: string,
   description: string,
   coverFileId: string
-): string {
-  const id = shortid.generate();
+): PrimaryKey {
+  const id: PrimaryKey = keygen();
   db.get(ModelName.PROJECT_GROUP)
     .push({ id, name, description, coverFileId })
     .write();

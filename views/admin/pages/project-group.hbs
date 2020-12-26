@@ -1,0 +1,152 @@
+{{> admin/navbar }}
+<div class="px-3 pb-6" id="app">
+  <div class="container" id>
+    <h1 class="title">프로젝트 그룹 수정</h1>
+    <form action="/admin/project-groups/{{ projectGroup.id }}" method="POST" enctype="multipart/form-data">
+      <div class="columns">
+        <label for="name" class="column">
+          프로젝트 그룹 ID
+          <input type="text" class="input" value="{{ projectGroup.id }}" name="id" disabled />
+        </label>
+      </div>
+      <div class="columns">
+        <label for="name" class="column">
+          프로젝트 그룹명
+          <input type="text" class="input" value="{{ projectGroup.name }}" name="name" id="" />
+        </label>
+      </div>
+      <div class="columns">
+        <label for="" class="column is-desktop">
+          프로젝트 그룹 설명
+          <textarea name="description" class="textarea">
+{{ projectGroup.description }}</textarea>
+        </label>
+      </div>
+      <div>커버 이미지 업로드</div>
+      <img src="/uploads/{{ projectGroup.coverFileId }}" alt="이미지가 업로드되지 않았습니다" />
+      <div class="file has-name">
+        <label class="file-label">
+          <input class="file-input" id="cover-file" type="file" name="cover" accept=".png,.jpg,.jpeg,.svg" />
+          <span class="file-cta">
+            <span class="file-icon">
+              <i class="fas fa-upload"></i>
+            </span>
+            <span class="file-label"> 이미지 고르기 </span>
+          </span>
+          <span class="file-name" id="cover-file-name"> </span>
+          <script>
+            $("input#cover-file").on("change", function (event) {
+              var i = $(this).prev("label").clone();
+              var file = $("input#cover-file")[0].files[0].name;
+              $("#cover-file-name").text(file);
+            });
+          </script>
+        </label>
+      </div>
+      <div class="columns">
+        <label for="" class="column is-desktop">
+          프로젝트 목록
+          <div class="column" style="display: flex; flex-direction: row;">
+            <select name="project" id="project-selector" class="select" style="width: 100%;">
+              {{#each projects as | project |}}
+              <option value="{{ project.id }}">
+                {{ project.name }}({{ project.id }})
+              </option>
+              {{/each}}
+            </select>
+            <button id="connect-project-to-project-groups" type="button" class="button is-success" style="
+                    margin-left: 10px;
+                    padding-left: 10px;
+                    padding-right: 10px;
+                    padding-top: 0px;
+                    padding-bottom: 0px;
+                    height: 30px;
+                  " onclick="connectProjectToprojectGroup()">
+              추가하기
+            </button>
+          </div>
+          <div class="column">
+            <table class="table is-bordered is-hoverable is-fullwidth has-text-centered">
+              <thead>
+                <tr>
+                  <th>이름</th>
+                  <th>아이디</th>
+                  <th>소유자</th>
+                  <th>액션</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(project, index) of projects">
+                  <td>
+                    [[ project.name ]]
+                  </td>
+                  <td>
+                    [[ project.id ]]
+                  </td>
+                  <td>
+                    [[ project.User.name ]]
+                  </td>
+                  <td>
+                    <button type="button" class="button is-danger is-small" @click="assignProjectGroup()">
+                      추가 해제
+                    </button>
+                  </td>
+                </tr>
+            </table>
+          </div>
+        </label>
+      </div>
+
+      <div class="row mt-3">
+        <button type="submit" class="button is-success is-pulled-right">
+          저장하기
+        </button>
+        <button type="button" id="delete" class="button is-danger is-pulled-right mr-2">
+          삭제하기
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+  const app = new Vue({
+    el: "#app",
+    delimiters: ['[[', ']]'],
+    data: {
+      projects: []
+    },
+    mounted() {
+      axios.get("/api/projects").then(({ data }) => {
+        this.projects = data;
+      }).catch((error) => {
+        console.log(error)
+        alert("Error!")
+      })
+    },
+    computed: {
+      assignedProjects() {
+        return this.projects
+      }
+    },
+    methods: {
+      assignProjectGroup(projectId, projectGroupId) {
+        axios.get(`/api/projects/assign-project-group?projectId=${projectId}&projectGroupId=${projectGroupId}`).then(res => {
+          alert("success!")
+        }).catch(() => {
+          alert('fail!')
+        })
+      },
+      disassignProjectGroup(projectId, projectGroupId) {
+        axios.get(`/api/projects/disassign-project-group?projectId=${projectId}&projectGroupId=${projectGroupId}`).then(res => {
+          alert("success!");
+        }).catch(() => {
+          alert("fail!");
+        })
+      }
+    }
+  })
+
+  $(document).ready(() => {
+    $("#project-selector").select2();
+  });
+</script>

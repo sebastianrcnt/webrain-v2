@@ -1,5 +1,4 @@
 import { RequestHandler } from "express";
-import * as UsersServices from "../services/users";
 import { User } from "../types/interfaces/models";
 
 export const levelAuthorizationGate = (

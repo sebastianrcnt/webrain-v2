@@ -1,10 +1,52 @@
 import low from "lowdb";
 import FileSync from "lowdb/adapters/FileSync";
-import { Database, ModelName } from "../types/interfaces/models";
+import Model, { Database, ModelName } from "../types/interfaces/models";
+import Relation from "../types/interfaces/relations";
 
 // Generate Database
 const adapter = new FileSync("database.json");
 const db: any = low(adapter);
+
+db._.mixin({
+  populate(array: any[], modelName: ModelName) {
+    return array.map((document) => {
+      for (let key in document) {
+        if (
+          document[key]["model"] === modelName && // Model is Target Model
+          document[key]["primaryKey"] // Model is not null
+        ) {
+          const populated = db
+            .get(modelName)
+            .find({
+              [document[key]["foreginKey"]]: document[key]["primaryKey"],
+            })
+            .value();
+          document[key] = populated;
+        }
+      }
+      return document;
+    });
+  },
+  populateField(array: any[], fieldName: any) {
+    return array.map((document) => {
+      const fieldValue: Relation<Model> = document[fieldName];
+      if (
+        fieldValue &&
+        fieldValue.model &&
+        fieldValue.foreginKey &&
+        fieldValue.primaryKey
+      ) {
+        document[fieldName] = db
+          .get(fieldValue.model)
+          .find({
+            [fieldValue.foreginKey]: fieldValue.primaryKey,
+          })
+          .value();
+      }
+      return document;
+    });
+  },
+});
 
 const database: Database = {
   User: [

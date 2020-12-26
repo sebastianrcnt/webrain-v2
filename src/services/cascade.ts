@@ -19,6 +19,7 @@ export default function cascadeDatabase(
           const field: Relation<Model> = document[fieldName];
           if (
             field.model === targetModelName &&
+            field.primaryKey && // not null
             field.primaryKey === primaryKey
           ) {
             return false;
