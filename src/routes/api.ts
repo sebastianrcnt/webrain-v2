@@ -10,8 +10,7 @@ import asyncHandler from "../utils/async-handler";
 
 const ApiRouter: Router = express();
 
-// Public Users
-// TODO: restrict other users
+// Change Relation
 ApiRouter.get(
   "/projects/assign-project-group",
   query("projectId").exists(),
@@ -23,4 +22,18 @@ ApiRouter.get(
   query("projectGroupId").exists(),
   asyncHandler(ApiControllers.disassignProjectGroup)
 );
+
+// Delete
+ApiRouter.delete(
+  "/projectGroups/:projectGroupId",
+  ApiControllers.deleteProjectGroup
+)
+  .delete("/projects/:projectId", ApiControllers.deleteProject)
+  .delete("/experiments/:experimentId", ApiControllers.deleteExperiment)
+  .delete("/users/:userEmail", ApiControllers.deleteUser)
+  .delete(
+    "/participations/:participationId",
+    ApiControllers.deleteParticipation
+  );
+
 export default ApiRouter;

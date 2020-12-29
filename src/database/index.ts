@@ -85,7 +85,8 @@ export const ExperimentSchema: Schema = new Schema({
   description: { type: String, required: true },
   coverFileId: { type: String, required: true },
   instructionsJson: { type: String, required: true, default: "{}" },
-  project: { type: ObjectId, required: true, ref: "Project" },
+  project: { type: ObjectId, ref: "Project" },
+  tags: { type: String, required: true, default: "" },
 });
 
 export interface IExperiment extends Document {
@@ -94,7 +95,8 @@ export interface IExperiment extends Document {
   description: string;
   coverFileId: string;
   instructionsJson: string;
-  project: IProject["_id"];
+  tags: string;
+  project?: IProject["_id"];
 }
 
 export const ExperimentModel = mongoose.model("Experiment", ExperimentSchema);

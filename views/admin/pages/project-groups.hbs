@@ -44,7 +44,7 @@
 <script>
   $(".delete-project-group-button").on("click", (event) => {
     const unitProjectId = $(event.target).attr("data-project-group-id");
-    $.ajax({ method: "delete", url: `/admin/project-groups/${unitProjectId}` })
+    $.ajax({ method: "delete", url: `/api/project-groups/${unitProjectId}` })
       .done(() => {
         alert("성공적으로 삭제되었습니다");
       })

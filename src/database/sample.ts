@@ -138,14 +138,16 @@ function generateSamples() {
     name: "Experiment 1",
     description: "This is Experiment 1",
     coverFileId: "image-6.jpeg",
+    tags: "Tag1,Tag2,Tag3",
     instructionsJson: "{}",
-    project: ProjectSamples.project1._id,
+    project: null,
   });
   const experiment2 = new ExperimentModel({
     id: "experiment2",
     name: "Experiment 2",
     description: "This is Experiment 2",
     coverFileId: "image-7.jpeg",
+    tags: "Tag1,Tag2,Tag3",
     instructionsJson: "{}",
     project: ProjectSamples.project1._id,
   });
@@ -154,6 +156,7 @@ function generateSamples() {
     name: "Experiment 3",
     description: "This is Experiment 3",
     coverFileId: "image-8.jpeg",
+    tags: "Tag1,Tag2,Tag3",
     instructionsJson: "{}",
     project: ProjectSamples.project2._id,
   });
@@ -162,6 +165,7 @@ function generateSamples() {
     name: "Experiment 4",
     description: "This is Experiment 4",
     coverFileId: "image-9.jpeg",
+    tags: "Tag1,Tag2,Tag3",
     instructionsJson: "{}",
     project: ProjectSamples.project2._id,
   });
@@ -170,6 +174,7 @@ function generateSamples() {
     name: "Experiment 5",
     description: "This is Experiment 5",
     coverFileId: "image-10.jpeg",
+    tags: "Tag1,Tag2,Tag3",
     instructionsJson: "{}",
     project: ProjectSamples.project3._id,
   });
@@ -184,7 +189,7 @@ function generateSamples() {
 
   const participation1 = new ParticipationModel({
     id: "participation1",
-    experiment: ExperimentSamples.experiment1,
+    experiment: ExperimentSamples.experiment2,
     participant: UserSamples.subject1,
     timestamp: 1601710095359,
     resultJson: "{}",

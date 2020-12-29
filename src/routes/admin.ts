@@ -31,15 +31,38 @@ AdminRouter.get(
   .post(
     "/project-groups/:projectGroupId",
     asyncHandler(AdminControllers.updateProjectGroup)
-  )
-  .delete(
-    "/project-groups/:projectGroupId",
-    asyncHandler(AdminControllers.deleteProjectGroup)
   );
 
 AdminRouter.get("/projects", asyncHandler(AdminControllers.getProjectsPage))
   .get("/projects/new", asyncHandler(AdminControllers.getNewProjectPage))
-  .get("/projects/:projectId", asyncHandler(AdminControllers.getProjectPage));
+  .get("/projects/:projectId", asyncHandler(AdminControllers.getProjectPage))
+  .post("/projects", asyncHandler(AdminControllers.createProject))
+  .post("/projects/:projectId", asyncHandler(AdminControllers.updateProject));
+
+AdminRouter.get("/users", asyncHandler(AdminControllers.getUsersPage)).get(
+  "/users/:userEmail",
+  asyncHandler(AdminControllers.getUserPage)
+);
+
+AdminRouter.get(
+  "/experiments",
+  asyncHandler(AdminControllers.getExperimentsPage)
+)
+  .get("/experiments/new", asyncHandler(AdminControllers.getNewExperimentPage))
+  .get(
+    "/experiments/:experimentId",
+    asyncHandler(AdminControllers.getExperimentPage)
+  )
+  .post("/experiments", asyncHandler(AdminControllers.createExperiment))
+  .post(
+    "/experiments/:experimentId",
+    asyncHandler(AdminControllers.updateExperiment)
+  );
+
+AdminRouter.get(
+  "/participations",
+  asyncHandler(AdminControllers.getParticipationsPage)
+);
 
 AdminRouter.get("/", redirectionGate("/admin/project-groups"));
 

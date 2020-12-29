@@ -39,6 +39,15 @@ const handlebars = exphbs.create({
     ternary(exp, val1, val2) {
       return exp ? val1 : val2;
     },
+    levelToString(level) {
+      if (level >= 200) {
+        return "관리자";
+      } else if (level >= 100) {
+        return "연구자";
+      } else {
+        return "실험대상자";
+      }
+    },
   },
 });
 

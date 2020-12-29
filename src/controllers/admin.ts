@@ -4,8 +4,11 @@ import {
   IExperiment,
   IProject,
   IProjectGroup,
+  IUser,
+  ParticipationModel,
   ProjectGroupModel,
   ProjectModel,
+  UserModel,
 } from "../database";
 import ProjectServices from "../services/projects";
 import { StatusCodes } from "../types/enums";
@@ -51,10 +54,6 @@ export const createProjectGroup: RequestHandler = async (req, res) => {
   throw new UnimplementedExceptionSync();
 };
 
-export const deleteProjectGroup: RequestHandler = async (req, res) => {
-  throw new UnimplementedExceptionSync();
-};
-
 export const updateProjectGroup: RequestHandler = async (req, res) => {
   throw new UnimplementedExceptionSync();
 };
@@ -74,10 +73,10 @@ export const getProjectPage: RequestHandler = async (req, res) => {
     .populate("project")
     .lean();
   let unassignedExperiments = experiments.filter((experiment) => {
-    return experiment.project._id.equals(project._id);
+    return !experiment.project?._id.equals(project._id);
   });
   let assignedExperiments = experiments.filter((experiment) => {
-    return experiment.project._id.equals(project._id);
+    return experiment.project?._id.equals(project._id);
   });
   res.render("admin/pages/project", {
     layout: "admin",
@@ -95,10 +94,68 @@ export const createProject: RequestHandler = async (req, res) => {
   throw new UnimplementedExceptionSync();
 };
 
-export const deleteProject: RequestHandler = async (req, res) => {
+export const updateProject: RequestHandler = async (req, res) => {
   throw new UnimplementedExceptionSync();
 };
 
-export const updateProject: RequestHandler = async (req, res) => {
+// Users
+export const getUsersPage: RequestHandler = async (req, res) => {
+  const users = await UserModel.find({}).lean();
+  res.render("admin/pages/users", { layout: "admin", users });
+};
+
+export const getUserPage: RequestHandler = async (req, res) => {
+  const userEmail = req.params.userEmail;
+  const user: IUser = await UserModel.findOne({ email: userEmail }).lean();
+  res.render("admin/pages/user", {
+    layout: "admin",
+    user,
+  });
+};
+
+export const updateUser: RequestHandler = async (req, res) => {
   throw new UnimplementedExceptionSync();
+};
+
+// Experiments
+
+export const getExperimentsPage: RequestHandler = async (req, res) => {
+  const experiments = await ExperimentModel.find({})
+    .populate({ path: "project", populate: { path: "author", model: "User" } })
+    .lean();
+  res.render("admin/pages/experiments", { layout: "admin", experiments });
+};
+
+export const getExperimentPage: RequestHandler = async (req, res) => {
+  const experimentId = req.params.experimentId;
+  const experiment = await ExperimentModel.findOne({ id: experimentId })
+    .populate({ path: "project", populate: { path: "author", model: "User" } })
+    .lean();
+  res.render("admin/pages/experiment", { layout: "admin", experiment });
+};
+
+export const getNewExperimentPage: RequestHandler = async (req, res) => {
+  res.render("admin/pages/experiments-new", { layout: "admin" });
+};
+
+export const createExperiment: RequestHandler = async (req, res) => {
+  throw new UnimplementedExceptionSync();
+};
+
+export const updateExperiment: RequestHandler = async (req, res) => {
+  throw new UnimplementedExceptionSync();
+};
+
+export const getParticipationsPage: RequestHandler = async (req, res) => {
+  const participations = await ParticipationModel.find({})
+    .populate("participant")
+    .populate({
+      path: "experiment",
+      populate: {
+        path: "project",
+        model: "Project",
+      },
+    })
+    .lean();
+  res.render("admin/pages/participations", { layout: "admin", participations });
 };

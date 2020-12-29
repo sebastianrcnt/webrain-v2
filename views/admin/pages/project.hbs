@@ -120,7 +120,7 @@
 
       <div class="row mt-3">
         <button type="submit" class="button is-success is-pulled-right">저장하기</button>
-        <button type="button" id="delete" class="button is-danger is-pulled-right mr-2">삭제하기</button>
+        <button type="button" id="delete-this-project" class="button is-danger is-pulled-right mr-2">삭제하기</button>
       </div>
     </form>
   </div>
@@ -164,10 +164,10 @@
           console.log(result);
         });
     });
-    $('#delete').on('click', () => {
+    $('#delete-this-project').on('click', () => {
       $.ajax({
         method: "delete",
-        url: "/admin/projects/{{project.id}}"
+        url: "/api/projects/{{project.id}}"
       }).then(() => {
         alert('삭제되었습니다.')
         window.location.href = "/admin/projects"
