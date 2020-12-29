@@ -86,6 +86,8 @@ export const ExperimentSchema: Schema = new Schema({
   coverFileId: { type: String, required: true },
   instructionsJson: { type: String, required: true, default: "{}" },
   project: { type: ObjectId, ref: "Project" },
+  fileId: { type: String, required: true },
+  fileName: { type: String, required: true },
   tags: { type: String, required: true, default: "" },
 });
 
@@ -95,6 +97,20 @@ export interface IExperiment extends Document {
   description: string;
   coverFileId: string;
   instructionsJson: string;
+  fileId: string;
+  fileName: string;
+  tags: string;
+  project?: IProject["_id"];
+}
+
+export interface IExperimentCreation {
+  id: string;
+  name: string;
+  description: string;
+  coverFileId: string;
+  instructionsJson: string;
+  fileId: string;
+  fileName: string;
   tags: string;
   project?: IProject["_id"];
 }

@@ -8,6 +8,7 @@ import * as AdminControllers from "../controllers/admin";
 import * as AuthorizationGates from "../gates/authorization-gates";
 import { redirectionGate } from "../gates/redirection-gates";
 import errorHandler from "../middlewares/error-handler";
+import { experimentsUploader } from "../services/uploaders";
 import asyncHandler from "../utils/async-handler";
 
 const AdminRouter: Router = express();
@@ -53,9 +54,14 @@ AdminRouter.get(
     "/experiments/:experimentId",
     asyncHandler(AdminControllers.getExperimentPage)
   )
-  .post("/experiments", asyncHandler(AdminControllers.createExperiment))
+  .post(
+    "/experiments",
+    experimentsUploader,
+    asyncHandler(AdminControllers.createExperiment)
+  )
   .post(
     "/experiments/:experimentId",
+    experimentsUploader,
     asyncHandler(AdminControllers.updateExperiment)
   );
 

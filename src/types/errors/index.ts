@@ -30,6 +30,7 @@ export abstract class Exception extends ExtendableError {
 export abstract class HttpException extends Exception {
   statusCode: StatusCodes;
   validationResult?: Result;
+  error?: Error;
   constructor(message: string, statusCode: StatusCodes) {
     super(message);
     this.statusCode = statusCode;

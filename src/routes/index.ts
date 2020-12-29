@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import errorHandler from "../middlewares/error-handler"
+import errorHandler from "../middlewares/error-handler";
 import AdminRouter from "./admin";
 import ApiRouter from "./api";
 import MainRouter from "./main";

@@ -11,6 +11,8 @@ import {
 import { StatusCodes } from "../types/enums";
 import {
   HttpExceptionAsync,
+  UnimplementedExceptionSync,
+  UnimplementedExceptionAsync,
 } from "../types/errors";
 
 export const deleteProjectGroup: RequestHandler = async (req, res) => {
@@ -63,47 +65,75 @@ export const deleteParticipation: RequestHandler = async (req, res) => {
 };
 
 export const assignProjectGroup: RequestHandler = async (req, res) => {
-  const result = validationResult(req);
-  if (result.isEmpty()) {
+  const { projectId, projectGroupId } = req.query;
+  if (
+    (await ProjectGroupModel.exists({ id: projectGroupId })) &&
+    (await ProjectModel.exists({ id: projectId }))
+  ) {
     const { projectId, projectGroupId } = req.query;
     const projectGroup: IProjectGroup = (await ProjectGroupModel.findOne({
       id: projectGroupId,
     }).lean()) as IProjectGroup;
-    if (projectGroup) {
-      await ProjectModel.findOneAndUpdate(
-        { id: projectId },
-        { projectGroup: projectGroup._id }
-      );
-    }
+    await ProjectModel.findOneAndUpdate(
+      { id: projectId },
+      { projectGroup: projectGroup._id }
+    );
     res.send();
   } else {
-    throw new HttpExceptionAsync(
-      "Validation Failed",
-      StatusCodes.BAD_REQUEST,
-      result
-    );
+    throw new HttpExceptionAsync("invalid id", 400);
   }
 };
 
 export const disassignProjectGroup: RequestHandler = async (req, res) => {
-  const result = validationResult(req);
-  if (result.isEmpty()) {
-    const { projectId, projectGroupId } = req.query;
+  const { projectId, projectGroupId } = req.query;
+  if (
+    (await ProjectGroupModel.exists({ id: projectGroupId })) &&
+    (await ProjectModel.exists({ id: projectId }))
+  ) {
     const projectGroup: IProjectGroup = (await ProjectGroupModel.findOne({
       id: projectGroupId,
     }).lean()) as IProjectGroup;
-    if (projectGroup) {
-      await ProjectModel.findOneAndUpdate(
-        { id: projectId },
-        { projectGroup: null }
-      );
-    }
+    await ProjectModel.findOneAndUpdate(
+      { id: projectId },
+      { projectGroup: null }
+    );
     res.send();
   } else {
-    throw new HttpExceptionAsync(
-      "Validation Failed",
-      StatusCodes.BAD_REQUEST,
-      result
+    throw new HttpExceptionAsync("invalid id", 400);
+  }
+};
+
+export const assignExperimentToProject: RequestHandler = async (req, res) => {
+  const { experimentId, projectId } = req.query;
+  if (
+    (await ProjectModel.exists({ id: projectId })) &&
+    (await ExperimentModel.exists({ id: experimentId }))
+  ) {
+    await ExperimentModel.findOneAndUpdate(
+      { id: experimentId },
+      { project: (await ProjectModel.findOne({ id: projectId }))._id }
     );
+    res.send();
+  } else {
+    throw new HttpExceptionAsync("invalid id", 400);
+  }
+};
+
+export const disassignExperimentToProject: RequestHandler = async (
+  req,
+  res
+) => {
+  const { experimentId, projectId } = req.query;
+  if (
+    (await ProjectModel.exists({ id: projectId })) &&
+    (await ExperimentModel.exists({ id: experimentId }))
+  ) {
+    await ExperimentModel.findOneAndUpdate(
+      { id: experimentId },
+      { project: null }
+    );
+    res.send();
+  } else {
+    throw new HttpExceptionAsync("invalid id", 400);
   }
 };

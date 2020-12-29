@@ -134,7 +134,7 @@
       const targetExperimentId = $(event.target).attr("data-experiment-id");
       $.ajax({
         method: "get",
-        url: `/api/process/connect-experiment-to-project?experimentId=${targetExperimentId}&projectId=${currentProjectId}`,
+        url: `/api/experiments/assign-project?experimentId=${targetExperimentId}&projectId=${currentProjectId}`,
       })
         .done(() => {
           window.location.reload();
@@ -152,7 +152,7 @@
       console.log(event.target);
       $.ajax({
         method: "get",
-        url: `/api/process/disconnect-experiment-to-project?experimentId=${targetExperimentId}&projectId=${currentProjectId}`,
+        url: `/api/experiments/disassign-project?experimentId=${targetExperimentId}&projectId=${currentProjectId}`,
       })
         .done(() => {
           window.location.reload();

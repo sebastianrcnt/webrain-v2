@@ -133,70 +133,70 @@ function generateSamples() {
     project3,
   };
 
-  const experiment1 = new ExperimentModel({
-    id: "experiment1",
-    name: "Experiment 1",
-    description: "This is Experiment 1",
-    coverFileId: "image-6.jpeg",
-    tags: "Tag1,Tag2,Tag3",
-    instructionsJson: "{}",
-    project: null,
-  });
-  const experiment2 = new ExperimentModel({
-    id: "experiment2",
-    name: "Experiment 2",
-    description: "This is Experiment 2",
-    coverFileId: "image-7.jpeg",
-    tags: "Tag1,Tag2,Tag3",
-    instructionsJson: "{}",
-    project: ProjectSamples.project1._id,
-  });
-  const experiment3 = new ExperimentModel({
-    id: "experiment3",
-    name: "Experiment 3",
-    description: "This is Experiment 3",
-    coverFileId: "image-8.jpeg",
-    tags: "Tag1,Tag2,Tag3",
-    instructionsJson: "{}",
-    project: ProjectSamples.project2._id,
-  });
-  const experiment4 = new ExperimentModel({
-    id: "experiment4",
-    name: "Experiment 4",
-    description: "This is Experiment 4",
-    coverFileId: "image-9.jpeg",
-    tags: "Tag1,Tag2,Tag3",
-    instructionsJson: "{}",
-    project: ProjectSamples.project2._id,
-  });
-  const experiment5 = new ExperimentModel({
-    id: "experiment5",
-    name: "Experiment 5",
-    description: "This is Experiment 5",
-    coverFileId: "image-10.jpeg",
-    tags: "Tag1,Tag2,Tag3",
-    instructionsJson: "{}",
-    project: ProjectSamples.project3._id,
-  });
+  // const experiment1 = new ExperimentModel({
+  //   id: "experiment1",
+  //   name: "Experiment 1",
+  //   description: "This is Experiment 1",
+  //   coverFileId: "image-6.jpeg",
+  //   tags: "Tag1,Tag2,Tag3",
+  //   instructionsJson: "{}",
+  //   project: null,
+  // });
+  // const experiment2 = new ExperimentModel({
+  //   id: "experiment2",
+  //   name: "Experiment 2",
+  //   description: "This is Experiment 2",
+  //   coverFileId: "image-7.jpeg",
+  //   tags: "Tag1,Tag2,Tag3",
+  //   instructionsJson: "{}",
+  //   project: ProjectSamples.project1._id,
+  // });
+  // const experiment3 = new ExperimentModel({
+  //   id: "experiment3",
+  //   name: "Experiment 3",
+  //   description: "This is Experiment 3",
+  //   coverFileId: "image-8.jpeg",
+  //   tags: "Tag1,Tag2,Tag3",
+  //   instructionsJson: "{}",
+  //   project: ProjectSamples.project2._id,
+  // });
+  // const experiment4 = new ExperimentModel({
+  //   id: "experiment4",
+  //   name: "Experiment 4",
+  //   description: "This is Experiment 4",
+  //   coverFileId: "image-9.jpeg",
+  //   tags: "Tag1,Tag2,Tag3",
+  //   instructionsJson: "{}",
+  //   project: ProjectSamples.project2._id,
+  // });
+  // const experiment5 = new ExperimentModel({
+  //   id: "experiment5",
+  //   name: "Experiment 5",
+  //   description: "This is Experiment 5",
+  //   coverFileId: "image-10.jpeg",
+  //   tags: "Tag1,Tag2,Tag3",
+  //   instructionsJson: "{}",
+  //   project: ProjectSamples.project3._id,
+  // });
 
   const ExperimentSamples = {
-    experiment1,
-    experiment2,
-    experiment3,
-    experiment4,
-    experiment5,
+    // experiment1,
+    // experiment2,
+    // experiment3,
+    // experiment4,
+    // experiment5,
   };
 
-  const participation1 = new ParticipationModel({
-    id: "participation1",
-    experiment: ExperimentSamples.experiment2,
-    participant: UserSamples.subject1,
-    timestamp: 1601710095359,
-    resultJson: "{}",
-  });
+  // const participation1 = new ParticipationModel({
+  //   id: "participation1",
+  //   experiment: ExperimentSamples.experiment2,
+  //   participant: UserSamples.subject1,
+  //   timestamp: 1601710095359,
+  //   resultJson: "{}",
+  // });
 
   const ParticipationSamples = {
-    participation1,
+    // participation1,
   };
 
   const Samples = {
