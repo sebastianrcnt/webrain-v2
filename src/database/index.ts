@@ -62,6 +62,7 @@ export const ProjectSchema: Schema = new Schema({
   coverFileId: { type: String, required: true },
   author: { type: ObjectId, required: true, ref: "User" },
   projectGroup: { type: ObjectId, required: true, ref: "ProjectGroup" },
+  public: { type: Boolean },
 });
 
 export interface IProject extends Document {
@@ -71,6 +72,7 @@ export interface IProject extends Document {
   agreement: string;
   coverFileId: string;
   author: IUser["_id"];
+  public?: boolean;
   projectGroup: IProjectGroup["_id"];
 }
 

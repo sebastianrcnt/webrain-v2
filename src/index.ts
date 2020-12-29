@@ -36,6 +36,9 @@ const handlebars = exphbs.create({
     isLargeOrEqualTo(x1, x2) {
       return x1 >= x2;
     },
+    ternary(exp, val1, val2) {
+      return exp ? val1 : val2;
+    },
   },
 });
 

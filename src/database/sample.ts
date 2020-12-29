@@ -104,6 +104,7 @@ function generateSamples() {
     agreement: "do you agree?",
     projectGroup: ProjectGroupSamples.projectGroup1,
     coverFileId: "image-3.jpeg",
+    public: true,
   } as IProject);
   const project2 = new ProjectModel({
     id: "project2",
@@ -113,6 +114,7 @@ function generateSamples() {
     agreement: "do you agree?",
     projectGroup: ProjectGroupSamples.projectGroup1,
     coverFileId: "image-4.jpeg",
+    public: false,
   } as IProject);
   const project3 = new ProjectModel({
     id: "project3",
@@ -122,6 +124,7 @@ function generateSamples() {
     agreement: "do you agree?",
     projectGroup: ProjectGroupSamples.projectGroup2,
     coverFileId: "image-5.jpeg",
+    public: false,
   } as IProject);
 
   const ProjectSamples = {

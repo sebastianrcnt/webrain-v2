@@ -37,10 +37,9 @@ AdminRouter.get(
     asyncHandler(AdminControllers.deleteProjectGroup)
   );
 
-AdminRouter.get("/projects", asyncHandler(AdminControllers.getProjectPage)).get(
-  "/projects/new",
-  asyncHandler(AdminControllers.getNewProjectPage)
-);
+AdminRouter.get("/projects", asyncHandler(AdminControllers.getProjectsPage))
+  .get("/projects/new", asyncHandler(AdminControllers.getNewProjectPage))
+  .get("/projects/:projectId", asyncHandler(AdminControllers.getProjectPage));
 
 AdminRouter.get("/", redirectionGate("/admin/project-groups"));
 

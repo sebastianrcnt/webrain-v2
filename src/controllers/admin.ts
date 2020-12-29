@@ -1,10 +1,13 @@
 import { RequestHandler } from "express";
 import {
+  ExperimentModel,
+  IExperiment,
   IProject,
   IProjectGroup,
   ProjectGroupModel,
   ProjectModel,
 } from "../database";
+import ProjectServices from "../services/projects";
 import { StatusCodes } from "../types/enums";
 import { HttpExceptionSync, UnimplementedExceptionSync } from "../types/errors";
 
@@ -58,15 +61,34 @@ export const updateProjectGroup: RequestHandler = async (req, res) => {
 
 // Projects
 export const getProjectsPage: RequestHandler = async (req, res) => {
-  throw new UnimplementedExceptionSync();
+  const projects = await ProjectModel.find({}).populate("author").lean();
+  res.render("admin/pages/projects", { layout: "admin", projects });
 };
 
 export const getProjectPage: RequestHandler = async (req, res) => {
-  throw new UnimplementedExceptionSync();
+  const projectId = req.params.projectId;
+  const project: IProject = await ProjectModel.findOne({ id: projectId })
+    .populate("author")
+    .lean();
+  let experiments: IExperiment[] = await ExperimentModel.find({})
+    .populate("project")
+    .lean();
+  let unassignedExperiments = experiments.filter((experiment) => {
+    return experiment.project._id.equals(project._id);
+  });
+  let assignedExperiments = experiments.filter((experiment) => {
+    return experiment.project._id.equals(project._id);
+  });
+  res.render("admin/pages/project", {
+    layout: "admin",
+    project,
+    unassignedExperiments,
+    assignedExperiments,
+  });
 };
 
 export const getNewProjectPage: RequestHandler = async (req, res) => {
-  throw new UnimplementedExceptionSync();
+  res.render("admin/pages/project-new", { layout: "admin" });
 };
 
 export const createProject: RequestHandler = async (req, res) => {
