@@ -85,10 +85,12 @@ export const ExperimentSchema: Schema = new Schema({
   description: { type: String, required: true },
   coverFileId: { type: String, required: true },
   instructionsJson: { type: String, required: true, default: "{}" },
-  project: { type: ObjectId, ref: "Project" },
   fileId: { type: String, required: true },
   fileName: { type: String, required: true },
   tags: { type: String, required: true, default: "" },
+  public: { type: Boolean, required: true, default: false },
+  project: { type: ObjectId, ref: "Project" },
+  author: { type: ObjectId, ref: "User" },
 });
 
 export interface IExperiment extends Document {
@@ -100,7 +102,9 @@ export interface IExperiment extends Document {
   fileId: string;
   fileName: string;
   tags: string;
+  public: boolean;
   project?: IProject["_id"];
+  author?: IUser["_id"];
 }
 
 export interface IExperimentCreation {
@@ -112,7 +116,9 @@ export interface IExperimentCreation {
   fileId: string;
   fileName: string;
   tags: string;
+  public: boolean;
   project?: IProject["_id"];
+  author?: IUser["_id"];
 }
 
 export const ExperimentModel = mongoose.model("Experiment", ExperimentSchema);

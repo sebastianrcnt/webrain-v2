@@ -19,6 +19,7 @@ import extract from "extract-zip";
 import Parser from "../services/parser";
 import fs from "fs";
 import sendMessageWithRedirectionUrl from "../utils/redirect";
+import { RequestWithSession } from "../types/interfaces/session";
 
 export const getProjectGroupsPage: RequestHandler = async (req, res) => {
   const projectGroups = await ProjectGroupModel.find({}).lean();
@@ -65,9 +66,15 @@ export const updateProjectGroup: RequestHandler = async (req, res) => {
 };
 
 // Projects
-export const getProjectsPage: RequestHandler = async (req, res) => {
+export const getProjectsPage: RequestHandler = async (
+  req: RequestWithSession,
+  res
+) => {
   const projects = await ProjectModel.find({}).populate("author").lean();
-  res.render("admin/pages/projects", { layout: "admin", projects });
+  const myProjects = projects.filter(
+    (project) => project.author === req.session.user._id
+  );
+  res.render("admin/pages/projects", { layout: "admin", projects, myProjects });
 };
 
 export const getProjectPage: RequestHandler = async (req, res) => {
@@ -125,17 +132,25 @@ export const updateUser: RequestHandler = async (req, res) => {
 
 // Experiments
 
-export const getExperimentsPage: RequestHandler = async (req, res) => {
+export const getExperimentsPage: RequestHandler = async (
+  req: RequestWithSession,
+  res
+) => {
   const experiments = await ExperimentModel.find({})
-    .populate({ path: "project", populate: { path: "author", model: "User" } })
+    .populate("project")
+    .populate("author")
     .lean();
-  res.render("admin/pages/experiments", { layout: "admin", experiments });
+  let myExperiments = experiments.filter(
+    (experiment) => experiment.author === req.session?.user._id
+  );
+  res.render("admin/pages/experiments", { layout: "admin", experiments, myExperiments });
 };
 
 export const getExperimentPage: RequestHandler = async (req, res) => {
   const experimentId = req.params.experimentId;
   const experiment = await ExperimentModel.findOne({ id: experimentId })
-    .populate({ path: "project", populate: { path: "author", model: "User" } })
+    .populate("project")
+    .populate("author")
     .lean();
   res.render("admin/pages/experiment", { layout: "admin", experiment });
 };
@@ -184,6 +199,22 @@ export const createExperiment = async (req, res, next) => {
     );
   }
 
+  // get current user
+  let author = null;
+  if (req.session?.user) {
+    const user: IUser = req.session.user;
+    author = user._id;
+  } else {
+    // todo identify user
+    const user = await UserModel.findOne({ email: "admin@monet.com" });
+    if (!user) {
+      console.log("Fatal Error: Not admin@monet.com found");
+      process.exit();
+    } else {
+      author = user._id;
+    }
+  }
+
   // write to database
   const experiment: IExperimentCreation = {
     id: zipFile.filename,
@@ -193,6 +224,8 @@ export const createExperiment = async (req, res, next) => {
     fileName: zipFile.originalname,
     coverFileId: coverFile.filename,
     instructionsJson: req.parseResultJson,
+    public: false,
+    author,
     tags: req.body.tags.trim(),
   };
 
@@ -207,7 +240,7 @@ export const createExperiment = async (req, res, next) => {
 
 export const updateExperiment = async (req, res, next) => {
   const { name, description, tags } = req.body;
-
+  const isPublic = req.body.public === "1";
   const coverFile = req.files["cover"] ? req.files["cover"][0] : null;
   const zipFile = req.files["zip"] ? req.files["zip"][0] : null;
 
@@ -216,7 +249,7 @@ export const updateExperiment = async (req, res, next) => {
   if (zipFile) {
     let sourcedir = path.join(
       path.resolve(zipFile.destination), // /uploads
-      "source_" + req.params.id // /source_experimentid
+      "source_" + req.params.experimentId // /source_experimentid
       // experimentId와 초기 업로드시 zipFile.filename이 동일하므로
       // 이렇게 접근할 수 있다.
     );
@@ -254,6 +287,7 @@ export const updateExperiment = async (req, res, next) => {
       name,
       description,
       tags,
+      public: isPublic,
       fileId: null,
       fileName: null,
       json: null,
@@ -269,7 +303,11 @@ export const updateExperiment = async (req, res, next) => {
         json: req.parseResultJson,
       };
     }
-    await ExperimentModel.updateOne({ id: req.params.id }, nextExperiment);
+    console.log({ nextExperiment });
+    await ExperimentModel.updateOne(
+      { id: req.params.experimentId },
+      nextExperiment
+    );
     sendMessageWithRedirectionUrl(
       res,
       "실험이 성공적으로 저장되었습니다",

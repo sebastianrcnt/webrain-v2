@@ -2,7 +2,11 @@ import { RequestHandler } from "express";
 import { validationResult, Result } from "express-validator";
 import {
   ExperimentModel,
+  IExperiment,
+  IExperimentCreation,
+  insertSampleToDatabase,
   IProjectGroup,
+  IUser,
   ParticipationModel,
   ProjectGroupModel,
   ProjectModel,
@@ -14,6 +18,10 @@ import {
   UnimplementedExceptionSync,
   UnimplementedExceptionAsync,
 } from "../types/errors";
+import fs from "fs";
+import path from "path";
+import keygen from "../utils/keygen";
+import fse from "fs-extra";
 
 export const deleteProjectGroup: RequestHandler = async (req, res) => {
   const projectGroupId = req.params.projectGroupId;
@@ -135,5 +143,42 @@ export const disassignExperimentToProject: RequestHandler = async (
     res.send();
   } else {
     throw new HttpExceptionAsync("invalid id", 400);
+  }
+};
+
+export const duplicateExperiment: RequestHandler = async (req, res) => {
+  const experimentId = req.query.experimentId;
+  const userEmail = req.query.userEmail;
+  const experiment: IExperiment = await ExperimentModel.findOne({
+    id: experimentId,
+  }).lean();
+  const user: IUser = await UserModel.findOne({ email: userEmail }).lean();
+  if (user && experiment) {
+    // copy experiment files
+    const newKey = keygen();
+    const newCoverFileId = keygen();
+    // copy zipfile
+    fse.copySync(`uploads/${experiment.id}`, `uploads/${newKey}`);
+    fse.copySync(`uploads/${experiment.coverFileId}`, `uploads/${newKey}`);
+    fse.copySync(`uploads/source_${experiment.id}`, `uploads/${newKey}`);
+    const newExperiment: IExperimentCreation = {
+      id: newKey,
+      name: experiment.name,
+      description: experiment.description,
+      fileId: newKey,
+      fileName: experiment.fileName,
+      coverFileId: newCoverFileId,
+      instructionsJson: experiment.instructionsJson,
+      public: false,
+      author: null,
+      tags: experiment.tags,
+    };
+    await ExperimentModel.create(newExperiment);
+    res.status(201).send("성공적으로 복사되었습니다");
+  } else {
+    throw new HttpExceptionAsync(
+      "유효한 유저 혹은 실험을 찾지 못했습니다",
+      400
+    );
   }
 };

@@ -1,5 +1,6 @@
 // System Modules
 import path from "path";
+import process from "process";
 
 // Server Modules
 import express from "express";
@@ -12,8 +13,9 @@ import exphbs from "express-handlebars";
 import dotenv from "dotenv";
 
 // My Modules
-import { initializeDatabase } from "./database";
+import { initializeDatabase, UserModel } from "./database";
 import IndexRouter from "./routes";
+import asyncHandler from "./utils/async-handler";
 
 // App Generation
 const app: express.Application = express();
@@ -48,6 +50,18 @@ const handlebars = exphbs.create({
         return "실험대상자";
       }
     },
+    getUserName(user) {
+      return user.name;
+    },
+    getUserEmail(user) {
+      return user.email;
+    },
+    isUserAdmin(user) {
+      return user.level >= 200;
+    },
+    isUserAdminOrResearcher(user) {
+      return user.level >= 100;
+    }
   },
 });
 
@@ -78,6 +92,24 @@ app.use(function (req, res, next) {
 // Static File Serving
 app.use(express.static(path.join(__dirname, "../public")));
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+
+app.use(
+  asyncHandler(async (req, res, next) => {
+    console.log(process.env.AUTH_DISABLED);
+    if (process.env.AUTH_DISABLED === "TRUE") {
+      const defaultUser = await UserModel.findOne({ email: "admin@monet.com" });
+      if (defaultUser) {
+        req.session.user = defaultUser;
+        next();
+      } else {
+        console.log("Fatal Error: Not admin@monet.com found");
+        process.exit();
+      }
+    } else {
+      next();
+    }
+  })
+);
 
 app.use(IndexRouter);
 

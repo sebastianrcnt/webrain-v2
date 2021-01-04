@@ -42,14 +42,24 @@ ApiRouter.get(
 // Delete
 ApiRouter.delete(
   "/projectGroups/:projectGroupId",
-  ApiControllers.deleteProjectGroup
+  asyncHandler(ApiControllers.deleteProjectGroup)
 )
-  .delete("/projects/:projectId", ApiControllers.deleteProject)
-  .delete("/experiments/:experimentId", ApiControllers.deleteExperiment)
-  .delete("/users/:userEmail", ApiControllers.deleteUser)
+  .delete("/projects/:projectId", asyncHandler(ApiControllers.deleteProject))
+  .delete(
+    "/experiments/:experimentId",
+    asyncHandler(ApiControllers.deleteExperiment)
+  )
+  .delete("/users/:userEmail", asyncHandler(ApiControllers.deleteUser))
   .delete(
     "/participations/:participationId",
-    ApiControllers.deleteParticipation
+    asyncHandler(ApiControllers.deleteParticipation)
   );
+
+ApiRouter.get(
+  "/experiments/duplicate",
+  query("experimentId").exists(),
+  query("userEmail").exists(),
+  asyncHandler(ApiControllers.duplicateExperiment)
+);
 
 export default ApiRouter;

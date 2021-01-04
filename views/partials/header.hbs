@@ -11,7 +11,7 @@
     <ul class="sub-menu">
       {{#if req.session.user }}
       <li style="font-size: 1rem; font-weight: 300; color: white;">
-        {{ req.session.user.name }} 님 반갑습니다.
+        {{ getUserName req.session.user }} 님 반갑습니다.
       </li>
       {{/if}}
       <li>
@@ -26,7 +26,7 @@
       <li>
         <a href="/main">단위 프로젝트</a>
       </li>
-      {{#if (isLargeOrEqualTo req.session.user.level 100) }}
+      {{#if ( isUserAdminOrResearcher req.session.user ) }}
       <li>
         <a href="/admin">관리자 페이지로 이동</a>
       </li>

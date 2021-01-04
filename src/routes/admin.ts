@@ -15,7 +15,7 @@ const AdminRouter: Router = express();
 
 // Public Users
 // TODO: restrict other users
-// AdminRouter.use(AuthorizationGates.levelAuthorizationGate(100, "/main/login"))
+AdminRouter.use(AuthorizationGates.levelAuthorizationGate(100, "/main/login"))
 AdminRouter.get(
   "/project-groups",
   asyncHandler(AdminControllers.getProjectGroupsPage)
