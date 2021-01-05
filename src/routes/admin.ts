@@ -8,14 +8,18 @@ import * as AdminControllers from "../controllers/admin";
 import * as AuthorizationGates from "../gates/authorization-gates";
 import { redirectionGate } from "../gates/redirection-gates";
 import errorHandler from "../middlewares/error-handler";
-import { experimentsUploader } from "../services/uploaders";
+import {
+  experimentsUploader,
+  projectGroupsUploader,
+  projectsUploader,
+} from "../services/uploaders";
 import asyncHandler from "../utils/async-handler";
 
 const AdminRouter: Router = express();
 
 // Public Users
 // TODO: restrict other users
-AdminRouter.use(AuthorizationGates.levelAuthorizationGate(100, "/main/login"))
+AdminRouter.use(AuthorizationGates.levelAuthorizationGate(100, "/main/login"));
 AdminRouter.get(
   "/project-groups",
   asyncHandler(AdminControllers.getProjectGroupsPage)
@@ -28,7 +32,11 @@ AdminRouter.get(
     "/project-groups/:projectGroupId",
     asyncHandler(AdminControllers.getProjectGroupPage)
   )
-  .post("/project-groups", asyncHandler(AdminControllers.createProjectGroup))
+  .post(
+    "/project-groups",
+    projectGroupsUploader,
+    asyncHandler(AdminControllers.createProjectGroup)
+  )
   .post(
     "/project-groups/:projectGroupId",
     asyncHandler(AdminControllers.updateProjectGroup)
@@ -37,8 +45,16 @@ AdminRouter.get(
 AdminRouter.get("/projects", asyncHandler(AdminControllers.getProjectsPage))
   .get("/projects/new", asyncHandler(AdminControllers.getNewProjectPage))
   .get("/projects/:projectId", asyncHandler(AdminControllers.getProjectPage))
-  .post("/projects", asyncHandler(AdminControllers.createProject))
-  .post("/projects/:projectId", asyncHandler(AdminControllers.updateProject));
+  .post(
+    "/projects",
+    projectsUploader,
+    asyncHandler(AdminControllers.createProject)
+  )
+  .post(
+    "/projects/:projectId",
+    projectsUploader,
+    asyncHandler(AdminControllers.updateProject)
+  );
 
 AdminRouter.get("/users", asyncHandler(AdminControllers.getUsersPage)).get(
   "/users/:userEmail",

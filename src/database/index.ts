@@ -48,6 +48,13 @@ export interface IProjectGroup extends Document {
   coverFileId: string;
 }
 
+export interface IProjectGroupCreation {
+  id: string;
+  name: string;
+  description: string;
+  coverFileId: string;
+}
+
 export const ProjectGroupModel = mongoose.model(
   "ProjectGroup",
   ProjectGroupSchema
@@ -61,7 +68,7 @@ export const ProjectSchema: Schema = new Schema({
   agreement: { type: String, required: true },
   coverFileId: { type: String, required: true },
   author: { type: ObjectId, required: true, ref: "User" },
-  projectGroup: { type: ObjectId, required: true, ref: "ProjectGroup" },
+  projectGroup: { type: ObjectId, ref: "ProjectGroup" },
   public: { type: Boolean },
 });
 
@@ -73,7 +80,18 @@ export interface IProject extends Document {
   coverFileId: string;
   author: IUser["_id"];
   public?: boolean;
-  projectGroup: IProjectGroup["_id"];
+  projectGroup?: IProjectGroup["_id"];
+}
+
+export interface IProjectCreation {
+  id: string;
+  name: string;
+  description: string;
+  agreement: string;
+  coverFileId: string;
+  author: IUser["_id"];
+  public?: boolean;
+  projectGroup?: IProjectGroup["_id"];
 }
 
 export const ProjectModel = mongoose.model("Project", ProjectSchema);

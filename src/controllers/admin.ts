@@ -11,6 +11,8 @@ import {
   ProjectGroupModel,
   ProjectModel,
   UserModel,
+  IProjectGroupCreation,
+  IProjectCreation,
 } from "../database";
 import { StatusCodes } from "../types/enums";
 import { HttpExceptionSync, UnimplementedExceptionSync } from "../types/errors";
@@ -58,11 +60,52 @@ export const getNewProjectGroupPage: RequestHandler = async (req, res) => {
 };
 
 export const createProjectGroup: RequestHandler = async (req, res) => {
-  throw new UnimplementedExceptionSync();
+  console.log(req.body);
+  console.log(req.file);
+  // req.file:
+  // {
+  //   fieldname: 'cover',
+  //   originalname: 'image-1.jpeg',
+  //   encoding: '7bit',
+  //   mimetype: 'image/jpeg',
+  //   destination: 'uploads/',
+  //   filename: 'dd2ebd7ae64a8690bf7af45f8d6d547f',
+  //   path: 'uploads/dd2ebd7ae64a8690bf7af45f8d6d547f',
+  //   size: 81281
+  // }
+  const { name, description } = req.body;
+  const { filename } = req.file;
+  const projectGroup: IProjectGroupCreation = {
+    id: filename,
+    name,
+    description,
+    coverFileId: filename,
+  };
+  await ProjectGroupModel.create(projectGroup);
+  sendMessageWithRedirectionUrl(
+    res,
+    "성공적으로 생성되었습니다",
+    "/admin/project-groups"
+  );
 };
 
 export const updateProjectGroup: RequestHandler = async (req, res) => {
-  throw new UnimplementedExceptionSync();
+  const { id, name, description } = req.body;
+  const { filename } = req.file;
+  console.log({
+    body: req.body,
+    file: req.file,
+  });
+  // TODO - test
+  await ProjectGroupModel.updateOne(
+    { id },
+    { name, description, coverFileId: filename }
+  );
+  sendMessageWithRedirectionUrl(
+    res,
+    "성공적으로 수정되었습니다",
+    `/admin/project-groups/${id}`
+  );
 };
 
 // Projects
@@ -71,8 +114,8 @@ export const getProjectsPage: RequestHandler = async (
   res
 ) => {
   const projects = await ProjectModel.find({}).populate("author").lean();
-  const myProjects = projects.filter(
-    (project) => project.author === req.session.user._id
+  const myProjects = projects.filter((project: IProject) =>
+    project.author._id.equals(req.session.user._id)
   );
   res.render("admin/pages/projects", { layout: "admin", projects, myProjects });
 };
@@ -103,12 +146,39 @@ export const getNewProjectPage: RequestHandler = async (req, res) => {
   res.render("admin/pages/project-new", { layout: "admin" });
 };
 
-export const createProject: RequestHandler = async (req, res) => {
-  throw new UnimplementedExceptionSync();
+export const createProject: RequestHandler = async (
+  req: RequestWithSession,
+  res
+) => {
+  const { name, description, agreement } = req.body;
+  const { filename } = req.file;
+  const project: IProjectCreation = {
+    id: filename,
+    name,
+    description,
+    agreement,
+    coverFileId: filename,
+    author: req.session.user._id,
+    projectGroup: null,
+    public: false,
+  };
+  await ProjectModel.create(project);
+  sendMessageWithRedirectionUrl(
+    res,
+    "성공적으로 생성되었습니다",
+    "/admin/projects"
+  );
 };
 
 export const updateProject: RequestHandler = async (req, res) => {
-  throw new UnimplementedExceptionSync();
+  const { id } = req.params;
+  const { name, description, agreement } = req.body;
+  console.log({
+    body: req.body,
+  }); // todo-public 01 -> true/false
+  // await ProjectModel.update({id}, {name, description, agreement, coverFileId: }
+  // throw new UnimplementedExceptionSync();
+  res.send();
 };
 
 // Users
@@ -140,10 +210,14 @@ export const getExperimentsPage: RequestHandler = async (
     .populate("project")
     .populate("author")
     .lean();
-  let myExperiments = experiments.filter(
-    (experiment) => experiment.author === req.session?.user._id
+  let myExperiments = experiments.filter((experiment) =>
+    experiment.author._id.equals(req.session?.user._id)
   );
-  res.render("admin/pages/experiments", { layout: "admin", experiments, myExperiments });
+  res.render("admin/pages/experiments", {
+    layout: "admin",
+    experiments,
+    myExperiments,
+  });
 };
 
 export const getExperimentPage: RequestHandler = async (req, res) => {
