@@ -185,6 +185,7 @@ export const duplicateExperiment: RequestHandler = async (req, res) => {
   }
 };
 
+// todo - impolement assignment
 export const assignParticipantToProject: RequestHandler = (req, res) => {
   throw new UnimplementedExceptionAsync();
 };

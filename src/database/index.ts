@@ -70,6 +70,7 @@ export const ProjectSchema: Schema = new Schema({
   author: { type: ObjectId, required: true, ref: "User" },
   projectGroup: { type: ObjectId, ref: "ProjectGroup" },
   public: { type: Boolean },
+  participants: [{ type: ObjectId, ref: "User" }],
 });
 
 export interface IProject extends Document {
@@ -81,6 +82,7 @@ export interface IProject extends Document {
   author: IUser["_id"];
   public?: boolean;
   projectGroup?: IProjectGroup["_id"];
+  participants: IUser["_id"][];
 }
 
 export interface IProjectCreation {
@@ -92,6 +94,7 @@ export interface IProjectCreation {
   author: IUser["_id"];
   public?: boolean;
   projectGroup?: IProjectGroup["_id"];
+  participants: IUser["_id"][];
 }
 
 export const ProjectModel = mongoose.model("Project", ProjectSchema);
