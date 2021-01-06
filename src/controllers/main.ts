@@ -120,6 +120,7 @@ export const loginUser = async (
   }
 };
 
+// todo - add email hook
 export const createUser = async (
   req: RequestWithSession,
   res: ResponseWithSession

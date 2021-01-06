@@ -19,6 +19,8 @@ const AdminRouter: Router = express();
 
 // Public Users
 // TODO: restrict other users
+// todo - restrict other users from reading other's experiments unless it is public
+// todo - figure out a way to lock and unlock experiments
 AdminRouter.use(AuthorizationGates.levelAuthorizationGate(100, "/main/login"));
 AdminRouter.get(
   "/project-groups",

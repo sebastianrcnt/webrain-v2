@@ -146,6 +146,8 @@ export const disassignExperimentToProject: RequestHandler = async (
   }
 };
 
+// todo - duplicate project on template
+// todo - open experiment to user
 export const duplicateExperiment: RequestHandler = async (req, res) => {
   const experimentId = req.query.experimentId;
   const userEmail = req.query.userEmail;
