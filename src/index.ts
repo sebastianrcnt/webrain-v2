@@ -38,7 +38,7 @@ const handlebars = exphbs.create({
     isLargeOrEqualTo(x1, x2) {
       return x1 >= x2;
     },
-    ternary(exp, val1, val2) {
+    ternary(exp, val1, val2): string {
       return exp ? val1 : val2;
     },
     levelToString(level) {
@@ -61,7 +61,7 @@ const handlebars = exphbs.create({
     },
     isUserAdminOrResearcher(user) {
       return user.level >= 100;
-    }
+    },
   },
 });
 

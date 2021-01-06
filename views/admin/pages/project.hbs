@@ -113,8 +113,8 @@
       <h2>공개여부</h2>
       <div class="select">
         <select name="public">
-          <option value="1" {{ternary project.public "selected" }}>공개</option>
-          <option value="0" {{ternary project.public "" }}>비공개</option>
+          <option value="1" {{ternary project.public "selected" ""}}>공개</option>
+          <option value="0" {{ternary project.public "" "selected"}}>비공개</option>
         </select>
       </div>
 

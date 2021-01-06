@@ -91,16 +91,18 @@ export const createProjectGroup: RequestHandler = async (req, res) => {
 
 export const updateProjectGroup: RequestHandler = async (req, res) => {
   const { id, name, description } = req.body;
-  const { filename } = req.file;
   console.log({
     body: req.body,
     file: req.file,
   });
   // TODO - test
-  await ProjectGroupModel.updateOne(
-    { id },
-    { name, description, coverFileId: filename }
-  );
+  await ProjectGroupModel.updateOne({ id }, { name, description });
+  if (req.file) {
+    await ProjectGroupModel.updateOne(
+      { id },
+      { coverFileId: req.file.filename }
+    );
+  }
   sendMessageWithRedirectionUrl(
     res,
     "성공적으로 수정되었습니다",
@@ -172,13 +174,19 @@ export const createProject: RequestHandler = async (
 
 export const updateProject: RequestHandler = async (req, res) => {
   const { id } = req.params;
-  const { name, description, agreement } = req.body;
-  console.log({
-    body: req.body,
-  }); // todo-public 01 -> true/false
-  // await ProjectModel.update({id}, {name, description, agreement, coverFileId: }
-  // throw new UnimplementedExceptionSync();
-  res.send();
+  let { name, description, agreement, public: p } = req.body;
+  await ProjectModel.updateOne(
+    { id },
+    { name, description, agreement, public: !!p }
+  );
+  if (req.file) {
+    await ProjectModel.updateOne({ id }, { coverFileId: req.file.filename });
+  }
+  sendMessageWithRedirectionUrl(
+    res,
+    "성공적으로 수정되었습니다",
+    "/admin/projects"
+  );
 };
 
 // Users
