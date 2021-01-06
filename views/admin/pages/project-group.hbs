@@ -54,14 +54,14 @@
               </option>
               {{/each}}
             </select>
-            <button id="connect-project-to-project-groups" type="button" class="button is-success" style="
+            <button id="assign-project-group" type="button" class="button is-success" style="
                     margin-left: 10px;
                     padding-left: 10px;
                     padding-right: 10px;
                     padding-top: 0px;
                     padding-bottom: 0px;
                     height: 30px;
-                  " onclick="connectProjectToprojectGroup()">
+                  ">
               추가하기
             </button>
           </div>
@@ -76,22 +76,24 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(project, index) of projects">
-                  <td>
-                    [[ project.name ]]
-                  </td>
-                  <td>
-                    [[ project.id ]]
-                  </td>
-                  <td>
-                    [[ project.User.name ]]
-                  </td>
-                  <td>
-                    <button type="button" class="button is-danger is-small" @click="assignProjectGroup()">
-                      추가 해제
-                    </button>
-                  </td>
+                {{#each assignedProjects as | assignedProject |}}
+                <td>
+                  {{ assignedProject.name }}
+                </td>
+                <td>
+                  {{ assignedProject.id }}
+                </td>
+                <td>
+                  {{ assignedProject.author.name }}
+                </td>
+                <td>
+                  <button type="button" class="button is-danger is-small"
+                    onclick="disassignProjectGroup('{{assignedProject.id}}','{{projectGroup.id}}')">
+                    추가 해제
+                  </button>
+                </td>
                 </tr>
+                {{/each}}
             </table>
           </div>
         </label>
@@ -101,7 +103,7 @@
         <button type="submit" class="button is-success is-pulled-right">
           저장하기
         </button>
-        <button type="button" id="delete" class="button is-danger is-pulled-right mr-2">
+        <button type="button" id="delete" class="button is-danger is-pulled-right mr-2 delete-this-project-group">
           삭제하기
         </button>
       </div>
@@ -109,44 +111,49 @@
   </div>
 </div>
 <script>
-  const app = new Vue({
-    el: "#app",
-    delimiters: ['[[', ']]'],
-    data: {
-      projects: []
-    },
-    mounted() {
-      axios.get("/api/projects").then(({ data }) => {
-        this.projects = data;
-      }).catch((error) => {
-        console.log(error)
-        alert("Error!")
-      })
-    },
-    computed: {
-      assignedProjects() {
-        return this.projects
-      }
-    },
-    methods: {
-      assignProjectGroup(projectId, projectGroupId) {
-        axios.get(`/api/projects/assign-project-group?projectId=${projectId}&projectGroupId=${projectGroupId}`).then(res => {
-          alert("success!")
-        }).catch(() => {
-          alert('fail!')
-        })
-      },
-      disassignProjectGroup(projectId, projectGroupId) {
-        axios.get(`/api/projects/disassign-project-group?projectId=${projectId}&projectGroupId=${projectGroupId}`).then(res => {
-          alert("success!");
-        }).catch(() => {
-          alert("fail!");
-        })
-      }
-    }
-  })
+  function assignProjectGroup(projectId, projectGroupId) {
+    axios.get(`/api/projects/assign-project-group?projectId=${projectId}&projectGroupId=${projectGroupId}`).then(res => {
+      alert("success!")
+      window.location.reload();
+    }).catch(() => {
+      alert('fail!')
+    })
+  }
+
+  function disassignProjectGroup(projectId, projectGroupId) {
+    axios.get(`/api/projects/disassign-project-group?projectId=${projectId}&projectGroupId=${projectGroupId}`).then(res => {
+      alert("success!");
+      window.location.reload()
+    }).catch(() => {
+      alert("fail!");
+    })
+  }
 
   $(document).ready(() => {
     $("#project-selector").select2();
+    $("#assign-project-group").on('click', () => {
+      const projectId = $('#project-selector').val()
+      const projectGroupId = '{{projectGroup.id}}';
+      assignProjectGroup(projectId, projectGroupId)
+    })
+  });
+
+  $("#delete-this-project-group").on("click", () => {
+    if (confirm("정말로 삭제하시겠습니까?")) {
+      $.ajax({
+        url: "/api/projects/{{ projectGroup.id }}",
+        method: "DELETE",
+      })
+        .done(() => {
+          alert("삭제되었습니다.");
+          window.location.href = "/admin/projects";
+        })
+        .fail(() => {
+          alert("삭제에 실패했습니다.");
+        })
+        .always((response) => {
+          console.log(response);
+        });
+    }
   });
 </script>

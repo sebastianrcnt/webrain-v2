@@ -1,0 +1,75 @@
+{{> admin/navbar }}
+<div class="px-3">
+  <section>
+    <!-- Project -->
+    <div class="card px-3 py-3">
+      <table class="table is-fullwidth has-text-centered" id="projects-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>참여자</th>
+            <th>프로젝트</th>
+            <th>실험</th>
+            <th>액션</th>
+          </tr>
+        </thead>
+        <tbody class="is-vcentered">
+          {{#each participations as | participation | }}
+          <tr>
+            <td>
+              {{ participation.id }}
+            </td>
+            <td>
+              <a href="/admin/users/{{ participation.participant.email }}">
+                {{ participation.participant.name }}
+              </a>
+            </td>
+            <td>
+              <a href="/admin/projects/{{ participation.experiment.project.id }}">
+                {{ participation.experiment.project.name }}
+              </a>
+            </td>
+            <td>
+              <a href="/admin/experiments/{{ participation.experiment.id }}">
+                {{ participation.experiment.name }}
+              </a>
+            </td>
+            <td>
+              <a href="/api/download/game/{{ participation.id }}" class="button is-primary is-small is-centered">
+                <i class="fa fa-download mr-1"></i>결과다운(json)
+              </a>
+              <a href="/game/{{ participation.id }}" class="button is-success is-small is-centered">
+                <i class="fa fa-link mr-1"></i>실험링크
+              </a>
+              <button data-participation-id="{{ participation.id }}" type="button"
+                class="button delete-participation-button is-danger is-small is-centered">
+                <i class="fa fa-trash mr-1"></i>삭제
+              </button>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+        <tfoot>
+          <a href="/admin/participations/new" class="button is-primary is-pulled-right mr-2 mb-6">
+            게임 생성하기
+          </a>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+</div>
+<script>
+  $(".delete-participation-button").on("click", (event) => {
+    const participationId = $(event.target).attr("data-participation-id");
+    $.ajax({ method: "delete", url: `/api/participations/${participationId}` })
+      .done(() => {
+        alert("성공적으로 삭제되었습니다");
+      })
+      .fail(() => {
+        alert("삭제에 실패하였습니다");
+      })
+      .always((participation) => {
+        window.location.reload();
+      });
+  });
+</script>

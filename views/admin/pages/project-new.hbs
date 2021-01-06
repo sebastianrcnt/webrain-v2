@@ -1,0 +1,61 @@
+{{> admin/navbar }}
+<div class="px-3 pb-6">
+  <div class="container">
+    <h1 class="title">프로젝트 생성</h1>
+    <form action="/admin/projects" method="POST" enctype="multipart/form-data">
+      <div class="columns">
+        <label for="name" class="column">
+          프로젝트명
+          <input type="text" class="input" name="name" id="" />
+        </label>
+      </div>
+      <div class="columns">
+        <label for="" class="column is-desktop">
+          프로젝트 설명
+          <textarea name="description" class="textarea"></textarea>
+        </label>
+      </div>
+      <div class="columns">
+        <label for="" class="column is-desktop">
+          연구 동의서
+          <textarea name="agreement" class="textarea"></textarea>
+        </label>
+      </div>
+      <div class="content">
+        <p>
+          프로젝트를 생성한 후, <code>프로젝트 수정 페이지</code>에서 실험을
+          추가하세요.
+        </p>
+      </div>
+      <div>커버 이미지 업로드</div>
+      <img alt="이미지가 업로드되지 않았습니다" />
+      <div class="file has-name">
+        <label class="file-label">
+          <input class="file-input" type="file" name="cover" id="cover-file" accept=".png,.jpg,.jpeg,.svg" />
+          <span class="file-cta">
+            <span class="file-icon">
+              <i class="fas fa-upload"></i>
+            </span>
+            <span class="file-label"> 이미지 고르기 </span>
+          </span>
+          <span class="file-name" id="cover-file-name"> </span>
+          <script>
+            $("input#cover-file").on("change", function (event) {
+              var i = $(this).prev("label").clone();
+              var file = $("input#cover-file")[0].files[0].name;
+              $("#cover-file-name").text(file);
+            });
+          </script>
+        </label>
+      </div>
+      <div class="row mt-3">
+        <button type="submit" class="button is-success is-pulled-right">
+          저장하기
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+  $(document).ready(() => { });
+</script>

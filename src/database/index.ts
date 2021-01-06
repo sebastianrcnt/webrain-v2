@@ -1,180 +1,202 @@
-import low from "lowdb";
-import FileSync from "lowdb/adapters/FileSync";
-import Model, { Database, ModelName } from "../types/interfaces/models";
-import Relation from "../types/interfaces/relations";
+import mongoose, { Schema, Document } from "mongoose";
+import { generate } from "shortid";
+const { ObjectId } = Schema.Types;
+import generateSamples from "./sample";
 
-// Generate Database
-const adapter = new FileSync("database.json");
-const db: any = low(adapter);
-
-db._.mixin({
-  populate(array: any[], modelName: ModelName) {
-    return array.map((document) => {
-      for (let key in document) {
-        if (
-          document[key]["model"] === modelName && // Model is Target Model
-          document[key]["primaryKey"] // Model is not null
-        ) {
-          const populated = db
-            .get(modelName)
-            .find({
-              [document[key]["foreginKey"]]: document[key]["primaryKey"],
-            })
-            .value();
-          document[key] = populated;
-        }
-      }
-      return document;
-    });
-  },
-  populateField(array: any[], fieldName: any) {
-    return array.map((document) => {
-      const fieldValue: Relation<Model> = document[fieldName];
-      if (
-        fieldValue &&
-        fieldValue.model &&
-        fieldValue.foreginKey &&
-        fieldValue.primaryKey
-      ) {
-        document[fieldName] = db
-          .get(fieldValue.model)
-          .find({
-            [fieldValue.foreginKey]: fieldValue.primaryKey,
-          })
-          .value();
-      }
-      return document;
-    });
-  },
+// User
+export const UserSchema: Schema = new Schema({
+  email: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  phone: { type: String, required: true },
+  password: { type: String, required: true },
+  level: { type: Number, required: true, default: 0 },
 });
 
-const database: Database = {
-  User: [
-    {
-      email: "admin@monet.com", // primary key
-      name: "admin",
-      phone: "010-1234-5678",
-      password: "secret",
-      level: 200,
-    },
-    {
-      email: "research@monet.com",
-      name: "researcher",
-      phone: "010-8765-4321",
-      password: "secret",
-      level: 100,
-    },
-    {
-      email: "subject@monet.com", // primary key
-      name: "subject",
-      phone: "010-1234-5678",
-      password: "secret",
-      level: 0,
-    },
-  ],
-  Project: [
-    {
-      id: "project1",
-      name: "Project 1",
-      author: {
-        model: ModelName.USER,
-        foreginKey: "email",
-        primaryKey: "admin@monet.com",
-      },
-      description: "this is project 1",
-      agreement: "do you agree?",
-      projectGroup: {
-        model: ModelName.PROJECT_GROUP,
-        foreginKey: "id",
-        primaryKey: "projectgroup1",
-      },
-      coverFileId: "p1cov.webp",
-    },
-    {
-      id: "project2",
-      name: "Project 2",
-      author: {
-        model: ModelName.USER,
-        foreginKey: "email",
-        primaryKey: "admin@monet.com",
-      },
-      description: "this is project 2",
-      agreement: "do you agree?",
-      projectGroup: {
-        model: ModelName.PROJECT_GROUP,
-        foreginKey: "id",
-        primaryKey: "projectgroup1",
-      },
-      coverFileId: "p1cov.webp",
-    },
-  ],
-  Experiment: [
-    {
-      id: "experiment1",
-      name: "Experiment 1",
-      description: "This is Experiment 1",
-      coverFileId: "e1.webp",
-      instructionsJson: "",
-      project: {
-        model: ModelName.PROJECT,
-        foreginKey: "id",
-        primaryKey: "project1",
-      },
-    },
-    {
-      id: "experiment2",
-      name: "Experiment 2",
-      description: "This is Experiment 2",
-      coverFileId: "e2.webp",
-      instructionsJson: "",
-      project: {
-        model: ModelName.PROJECT,
-        foreginKey: "id",
-        primaryKey: "project1",
-      },
-    },
-    {
-      id: "experiment3",
-      name: "Experiment 3",
-      description: "This is Experiment 3",
-      coverFileId: "e3.webp",
-      instructionsJson: "",
-      project: {
-        model: ModelName.PROJECT,
-        foreginKey: "id",
-        primaryKey: "project1",
-      },
-    },
-  ],
-  Participation: [
-    {
-      experiment: {
-        model: ModelName.EXPERIMENT,
-        foreginKey: "id",
-        primaryKey: "experiment1",
-      },
-      participant: {
-        model: ModelName.USER,
-        foreginKey: "email",
-        primaryKey: "admin@monet.com",
-      },
-      timestamp: 1601710095359,
-      resultJson: "{}", // in json
-    },
-  ],
-  ProjectGroup: [
-    {
-      id: "projectgroup1",
-      name: "Project Group 1",
-      description: "this is project group 1",
-      coverFileId: "up1cov.webp",
-    },
-  ],
-};
-
-export function initializeDatabase() {
-  db.defaults(database).write();
+export interface IUser extends Document {
+  email: string;
+  name: string;
+  phone: string;
+  password: string;
+  level: number;
 }
 
-initializeDatabase();
-export default db;
+export interface IUserCreation {
+  email: IUser["email"];
+  name: IUser["name"];
+  phone: IUser["phone"];
+  password: IUser["password"];
+}
+
+UserSchema.statics.register = async function (userCreation: IUserCreation) {
+  await this.create({ ...userCreation });
+};
+
+export const UserModel = mongoose.model("User", UserSchema);
+
+// Project Group
+export const ProjectGroupSchema: Schema = new Schema({
+  id: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  coverFileId: { type: String, required: true },
+});
+
+export interface IProjectGroup extends Document {
+  id: string;
+  name: string;
+  description: string;
+  coverFileId: string;
+}
+
+export interface IProjectGroupCreation {
+  id: string;
+  name: string;
+  description: string;
+  coverFileId: string;
+}
+
+export const ProjectGroupModel = mongoose.model(
+  "ProjectGroup",
+  ProjectGroupSchema
+);
+
+// Project
+export const ProjectSchema: Schema = new Schema({
+  id: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  agreement: { type: String, required: true },
+  coverFileId: { type: String, required: true },
+  author: { type: ObjectId, required: true, ref: "User" },
+  projectGroup: { type: ObjectId, ref: "ProjectGroup" },
+  public: { type: Boolean },
+});
+
+export interface IProject extends Document {
+  id: string;
+  name: string;
+  description: string;
+  agreement: string;
+  coverFileId: string;
+  author: IUser["_id"];
+  public?: boolean;
+  projectGroup?: IProjectGroup["_id"];
+}
+
+export interface IProjectCreation {
+  id: string;
+  name: string;
+  description: string;
+  agreement: string;
+  coverFileId: string;
+  author: IUser["_id"];
+  public?: boolean;
+  projectGroup?: IProjectGroup["_id"];
+}
+
+export const ProjectModel = mongoose.model("Project", ProjectSchema);
+
+// Experiment
+export const ExperimentSchema: Schema = new Schema({
+  id: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  coverFileId: { type: String, required: true },
+  instructionsJson: { type: String, required: true, default: "{}" },
+  fileId: { type: String, required: true },
+  fileName: { type: String, required: true },
+  tags: { type: String, required: true, default: "" },
+  public: { type: Boolean, required: true, default: false },
+  project: { type: ObjectId, ref: "Project" },
+  author: { type: ObjectId, ref: "User" },
+});
+
+export interface IExperiment extends Document {
+  id: string;
+  name: string;
+  description: string;
+  coverFileId: string;
+  instructionsJson: string;
+  fileId: string;
+  fileName: string;
+  tags: string;
+  public: boolean;
+  project?: IProject["_id"];
+  author?: IUser["_id"];
+}
+
+export interface IExperimentCreation {
+  id: string;
+  name: string;
+  description: string;
+  coverFileId: string;
+  instructionsJson: string;
+  fileId: string;
+  fileName: string;
+  tags: string;
+  public: boolean;
+  project?: IProject["_id"];
+  author?: IUser["_id"];
+}
+
+export const ExperimentModel = mongoose.model("Experiment", ExperimentSchema);
+
+// Participation
+export const ParticipationSchema: Schema = new Schema({
+  id: { type: String, required: true, unique: true },
+  experiment: { type: ObjectId, required: true, ref: "Experiment" },
+  participant: { type: ObjectId, required: true, ref: "User" },
+  timestamp: { type: Number, required: false },
+  resultJson: { type: String, required: false },
+});
+
+export interface IParticipation extends Document {
+  id: string;
+  experiment: IExperiment["_id"];
+  participant: IUser["_id"];
+  timestamp: number;
+  resultJson: number;
+}
+
+export const ParticipationModel = mongoose.model(
+  "Participation",
+  ParticipationSchema
+);
+
+export async function initializeDatabase() {
+  mongoose
+    .connect("mongodb://localhost:27017/webrain", {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+      useFindAndModify: true,
+    })
+    .then(() => {
+      console.log("👌  Successfully Connected To Database");
+    });
+}
+
+export async function clearDatabase() {
+  await UserModel.deleteMany({}).exec();
+  await ProjectGroupModel.deleteMany({}).exec();
+  await ProjectModel.deleteMany({}).exec();
+  await ExperimentModel.deleteMany({}).exec();
+  await ParticipationModel.deleteMany({}).exec();
+  console.log("👌  Successfully Cleared Database");
+}
+
+export async function insertSampleToDatabase() {
+  async function saveSamples(samples: any) {
+    for (let name in samples) {
+      console.log(`✍  inserting ${name} to database`);
+      await (samples[name] as Document).save();
+    }
+  }
+  const Samples = generateSamples();
+  await saveSamples(Samples.UserSamples);
+  await saveSamples(Samples.ProjectGroupSamples);
+  await saveSamples(Samples.ProjectSamples);
+  await saveSamples(Samples.ExperimentSamples);
+  await saveSamples(Samples.ParticipationSamples);
+  console.log("👌  Successfully Inserted To Database");
+}
