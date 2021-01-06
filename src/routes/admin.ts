@@ -56,10 +56,9 @@ AdminRouter.get("/projects", asyncHandler(AdminControllers.getProjectsPage))
     asyncHandler(AdminControllers.updateProject)
   );
 
-AdminRouter.get("/users", asyncHandler(AdminControllers.getUsersPage)).get(
-  "/users/:userEmail",
-  asyncHandler(AdminControllers.getUserPage)
-);
+AdminRouter.get("/users", asyncHandler(AdminControllers.getUsersPage))
+  .get("/users/:userEmail", asyncHandler(AdminControllers.getUserPage))
+  .post("/users/:userEmail", asyncHandler(AdminControllers.updateUser));
 
 AdminRouter.get(
   "/experiments",

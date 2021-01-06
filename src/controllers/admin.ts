@@ -95,7 +95,6 @@ export const updateProjectGroup: RequestHandler = async (req, res) => {
     body: req.body,
     file: req.file,
   });
-  // TODO - test
   await ProjectGroupModel.updateOne({ id }, { name, description });
   if (req.file) {
     await ProjectGroupModel.updateOne(
@@ -205,7 +204,15 @@ export const getUserPage: RequestHandler = async (req, res) => {
 };
 
 export const updateUser: RequestHandler = async (req, res) => {
-  throw new UnimplementedExceptionSync();
+  // todo - update user
+  const userEmail = req.params.userEmail;
+  const { level } = req.body;
+  await UserModel.updateOne({ email: userEmail }, { level });
+  sendMessageWithRedirectionUrl(
+    res,
+    "성공적으로 수정되었습니다",
+    "/admin/projects"
+  );
 };
 
 // Experiments
