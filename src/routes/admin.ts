@@ -42,7 +42,8 @@ AdminRouter.get(
   .post(
     "/project-groups/:projectGroupId",
     asyncHandler(AdminControllers.updateProjectGroup)
-  );
+);
+// todo - add validation with express-validator on both (1) routing layer and (2) controller layer
 
 AdminRouter.get("/projects", asyncHandler(AdminControllers.getProjectsPage))
   .get("/projects/new", asyncHandler(AdminControllers.getNewProjectPage))
