@@ -185,10 +185,10 @@ export const duplicateExperiment: RequestHandler = async (req, res) => {
   }
 };
 
-export const addUserToProject: RequestHandler = (req, res) => {
+export const assignParticipantToProject: RequestHandler = (req, res) => {
   throw new UnimplementedExceptionAsync();
 };
 
-export const removeUserFromProject: RequestHandler = (req, res) => {
+export const disassignParticipantToProject: RequestHandler = (req, res) => {
   throw new UnimplementedExceptionAsync();
 };

@@ -62,4 +62,16 @@ ApiRouter.get(
   asyncHandler(ApiControllers.duplicateExperiment)
 );
 
+ApiRouter.get(
+  "/users/assign-project",
+  query("projectId").exists(),
+  query("userEmail").exists(),
+  asyncHandler(ApiControllers.assignParticipantToProject)
+).get(
+  "/users/disassign-project",
+  query("projectId").exists(),
+  query("userEmail").exists(),
+  asyncHandler(ApiControllers.disassignParticipantToProject)
+);
+
 export default ApiRouter;
