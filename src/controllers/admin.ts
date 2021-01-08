@@ -162,6 +162,7 @@ export const createProject: RequestHandler = async (
     author: req.session.user._id,
     projectGroup: null,
     public: false,
+    participants: [],
   };
   await ProjectModel.create(project);
   sendMessageWithRedirectionUrl(
