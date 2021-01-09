@@ -1,5 +1,4 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { generate } from "shortid";
 const { ObjectId } = Schema.Types;
 import generateSamples from "./sample";
 

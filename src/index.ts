@@ -57,10 +57,10 @@ const handlebars = exphbs.create({
       return user.email;
     },
     isUserAdmin(user) {
-      return user.level >= 200;
+      return user ? user.level >= 200: false;
     },
     isUserAdminOrResearcher(user) {
-      return user.level >= 100;
+      return user ? user.level >= 100 : false;
     },
   },
 });
