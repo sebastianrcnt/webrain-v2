@@ -86,6 +86,9 @@ AdminRouter.get(
 AdminRouter.get(
   "/participations",
   asyncHandler(AdminControllers.getParticipationsPage)
+).get(
+  "/participations/new",
+  asyncHandler(AdminControllers.getNewParticipationsPage)
 );
 
 AdminRouter.get("/", redirectionGate("/admin/project-groups"));

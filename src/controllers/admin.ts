@@ -246,7 +246,7 @@ export const getExperimentPage: RequestHandler = async (req, res) => {
 };
 
 export const getNewExperimentPage: RequestHandler = async (req, res) => {
-  res.render("admin/pages/experiments-new", { layout: "admin" });
+  res.render("admin/pages/experiment-new", { layout: "admin" });
 };
 
 export const createExperiment = async (req, res, next) => {
@@ -425,4 +425,8 @@ export const getParticipationsPage: RequestHandler = async (req, res) => {
     })
     .lean();
   res.render("admin/pages/participations", { layout: "admin", participations });
+};
+
+export const getNewParticipationsPage: RequestHandler = async (req, res) => {
+  res.render("admin/pages/participations-new", { layout: "admin" });
 };
