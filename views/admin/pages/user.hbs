@@ -35,6 +35,78 @@
           <li>200 ~: <code>관리자</code></li>
         </ol>
       </div>
+      <h1 class="title col">
+        참여 프로젝트 관리
+        <button type="button" class="button col" onclick="$('#manage-participating-projects').toggle()">접기/펴기</button>
+      </h1>
+      <div class="card px-3 py-3 mb-6" id="manage-participating-projects">
+        <h2>참여중인 프로젝트</h2>
+        <table class="table is-bordered is-hoverable is-fullwidth has-text-centered" id="assigned-projects">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>이름</th>
+              <th>소유자</th>
+              <th>액션</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each assignedProjects as | project |}}
+            <tr>
+              <td>{{project.id}}</td>
+              <td>
+                <a href="/admin/users/{{project.id}}">
+                  {{project.name}}
+                </a>
+              </td>
+              <td>
+                <a href="/admin/users/{{project.author.email}}">
+                  {{project.author.name}}
+                </a>
+              </td>
+              <td>
+                <span data-project-id="{{project.id}}" class="button py-0 is-danger disconnect-participant-to-project">
+                  제거
+                </span>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+        <h2>참여중이지 않은 프로젝트</h2>
+        <table class="table is-bordered is-hoverable is-fullwidth has-text-centered" id="unassigned-projects">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>이름</th>
+              <th>소유자</th>
+              <th>액션</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each unassignedProjects as | project |}}
+            <tr>
+              <td>{{project.id}}</td>
+              <td>
+                <a href="/admin/users/{{project.id}}">
+                  {{project.name}}
+                </a>
+              </td>
+              <td>
+                <a href="/admin/users/{{project.author.email}}">
+                  {{project.author.name}}
+                </a>
+              </td>
+              <td>
+                <span data-project-id="{{project.id}}" class="button py-0 is-success connect-participant-to-project">
+                  추가
+                </span>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
       <div class="row mt-3">
         <button type="submit" class="button is-success is-pulled-right">저장하기</button>
       </div>
@@ -47,6 +119,9 @@
 </div>
 <script>
   $(document).ready(() => {
+    $("#assigned-projects").DataTable();
+    $("#unassigned-projects").DataTable();
+
     $('#delete-this-user').on('click', () => {
       $.ajax({
         method: "delete",
@@ -60,5 +135,27 @@
         console.log(response)
       })
     })
+
+    $("span.connect-participant-to-project").on("click", (event) => {
+      const projectId = $(event.target).attr("data-project-id");
+      const participantEmail = "{{user.email}}"
+      $.ajax({ method: 'get', url: "/api/users/assign-project", data: { participantEmail, projectId } }).then(res => {
+        console.log(res)
+      }).always(() => {
+        window.location.reload()
+      })
+    });
+
+    $("span.disconnect-participant-to-project").on("click", (event) => {
+      const projectId = $(event.target).attr("data-project-id");
+      const participantEmail = "{{user.email}}"
+      $.ajax({ method: 'get', url: '/api/users/disassign-project', data: { participantEmail, projectId } }).then(res => {
+        console.log(res)
+      }).always(() => {
+        window.location.reload()
+      });
+    })
   });
+
+
 </script>

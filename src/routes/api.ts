@@ -65,12 +65,12 @@ ApiRouter.get(
 ApiRouter.get(
   "/users/assign-project",
   query("projectId").exists(),
-  query("userEmail").exists(),
+  query("participantEmail").exists(),
   asyncHandler(ApiControllers.assignParticipantToProject)
 ).get(
   "/users/disassign-project",
   query("projectId").exists(),
-  query("userEmail").exists(),
+  query("participantEmail").exists(),
   asyncHandler(ApiControllers.disassignParticipantToProject)
 );
 

@@ -91,6 +91,9 @@ AdminRouter.get(
   asyncHandler(AdminControllers.getNewParticipationsPage)
 );
 
+AdminRouter.get("/assign", asyncHandler(AdminControllers.getAssignPage));
+AdminRouter.get("/home-edit");
+
 AdminRouter.get("/", redirectionGate("/admin/project-groups"));
 
 AdminRouter.use(errorHandler);

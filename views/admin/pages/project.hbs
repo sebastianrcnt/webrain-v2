@@ -55,66 +55,136 @@
           <textarea name="agreement" class="textarea">{{project.agreement}}</textarea>
         </label>
       </div>
-      <h2>등록된 실험</h2>
-      <table class="table is-bordered is-hoverable is-fullwidth has-text-centered" id="experiments">
-        <thead>
-          <tr>
-            <th>실험ID</th>
-            <th>실험명</th>
-            <th>액션</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each assignedExperiments as | experiment |}}
-          <tr>
-            <td>{{experiment.id}}</td>
-            <td>
-              <a href="/admin/experiments/{{experiment.id}}">
-                {{experiment.name}}
-              </a>
-            </td>
-            <td>
-              <span data-experiment-id="{{experiment.id}}"
-                class="button py-0 is-danger disconnect-experiment-to-project">
-                제거
-              </span>
-            </td>
-          </tr>
-          {{/each}}
-        </tbody>
-      </table>
-      <h2>등록되지 않은 실험</h2>
-      <table class="table is-bordered is-hoverable is-fullwidth has-text-centered" id="unselected-experiments">
-        <thead>
-          <tr>
-            <th>실험ID</th>
-            <th>실험명</th>
-            <th>액션</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each unassignedExperiments as | experiment |}}
-          <tr>
-            <td>{{experiment.id}}</td>
-            <td>
-              <a href="/admin/experiments/{{experiment.id}}">
-                {{experiment.name}}
-              </a>
-            </td>
-            <td>
-              <span data-experiment-id="{{experiment.id}}" class="button py-0 is-success connect-experiment-to-project">
-                추가
-              </span>
-            </td>
-          </tr>
-          {{/each}}
-        </tbody>
-      </table>
+      <h1 class="title col">
+        등록된 실험 관리
+        <button type="button" class="button col" onclick="$('#manage-experiments').toggle()">접기/펴기</button>
+      </h1>
+      <div class="card px-3 py-3 mb-6" id="manage-experiments">
+        <h2>등록된 실험</h2>
+        <table class="table is-bordered is-hoverable is-fullwidth has-text-centered" id="assigned-experiments">
+          <thead>
+            <tr>
+              <th>실험ID</th>
+              <th>실험명</th>
+              <th>액션</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each assignedExperiments as | experiment |}}
+            <tr>
+              <td>{{experiment.id}}</td>
+              <td>
+                <a href="/admin/experiments/{{experiment.id}}">
+                  {{experiment.name}}
+                </a>
+              </td>
+              <td>
+                <span data-experiment-id="{{experiment.id}}"
+                  class="button py-0 is-danger disconnect-experiment-to-project">
+                  제거
+                </span>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+        <h2>등록되지 않은 실험</h2>
+        <table class="table is-bordered is-hoverable is-fullwidth has-text-centered" id="unassigned-experiments">
+          <thead>
+            <tr>
+              <th>실험ID</th>
+              <th>실험명</th>
+              <th>액션</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each unassignedExperiments as | experiment |}}
+            <tr>
+              <td>{{experiment.id}}</td>
+              <td>
+                <a href="/admin/experiments/{{experiment.id}}">
+                  {{experiment.name}}
+                </a>
+              </td>
+              <td>
+                <span data-experiment-id="{{experiment.id}}"
+                  class="button py-0 is-success connect-experiment-to-project">
+                  추가
+                </span>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+
+      <h1 class="title col">
+        참여자 관리
+        <button type="button" class="button col" onclick="$('#manage-participants').toggle()">접기/펴기</button>
+      </h1>
+      <div class="card px-3 py-3 mb-6" id="manage-participants">
+        <h2>등록된 참여자</h2>
+        <table class="table is-bordered is-hoverable is-fullwidth has-text-centered" id="assigned-participants">
+          <thead>
+            <tr>
+              <th>이메일</th>
+              <th>이름</th>
+              <th>액션</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each assignedParticipants as | participant |}}
+            <tr>
+              <td>{{participant.email}}</td>
+              <td>
+                <a href="/admin/users/{{participant.email}}">
+                  {{participant.name}}
+                </a>
+              </td>
+              <td>
+                <span data-participant-email="{{participant.email}}"
+                  class="button py-0 is-danger disconnect-participant-to-project">
+                  제거
+                </span>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+        <h2>등록되지 않은 참여자</h2>
+        <table class="table is-bordered is-hoverable is-fullwidth has-text-centered" id="unassigned-participants">
+          <thead>
+            <tr>
+              <th>이메일</th>
+              <th>이름</th>
+              <th>액션</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each unassignedParticipants as | participant |}}
+            <tr>
+              <td>{{participant.email}}</td>
+              <td>
+                <a href="/admin/users/{{participant.email}}">
+                  {{participant.name}}
+                </a>
+              </td>
+              <td>
+                <span data-participant-email="{{participant.email}}"
+                  class="button py-0 is-success connect-participant-to-project">
+                  추가
+                </span>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
       <h2>공개여부</h2>
       <div class="select">
         <select name="public">
-          <option value="1" {{ternary project.public "selected" ""}}>공개</option>
-          <option value="0" {{ternary project.public "" "selected"}}>비공개</option>
+          <option value="1" {{ternary project.public "selected" "" }}>공개</option>
+          <option value="0" {{ternary project.public "" "selected" }}>비공개</option>
         </select>
       </div>
 
@@ -127,8 +197,10 @@
 </div>
 <script>
   $(document).ready(() => {
-    $("#experiments").DataTable();
-    $("#unselected-experiments").DataTable();
+    $("#assigned-experiments").DataTable();
+    $("#unassigned-experiments").DataTable();
+    $("#assigned-participants").DataTable();
+    $("#unassigned-participants").DataTable();
     $("span.connect-experiment-to-project").on("click", (event) => {
       const currentProjectId = "{{project.id}}";
       const targetExperimentId = $(event.target).attr("data-experiment-id");
@@ -164,6 +236,27 @@
           console.log(result);
         });
     });
+
+    $("span.connect-participant-to-project").on("click", (event) => {
+      const projectId = "{{project.id}}";
+      const participantEmail = $(event.target).attr("data-participant-email");
+      $.ajax({ method: 'get', url: "/api/users/assign-project", data: { participantEmail, projectId } }).then(res => {
+        console.log(res)
+      }).always(() => {
+        window.location.reload()
+      })
+    });
+
+    $("span.disconnect-participant-to-project").on("click", (event) => {
+      const projectId = "{{project.id}}";
+      const participantEmail = $(event.target).attr("data-participant-email");
+      $.ajax({ method: 'get', url: '/api/users/disassign-project', data: { participantEmail, projectId } }).then(res => {
+        console.log(res)
+      }).always(() => {
+        window.location.reload()
+      });
+    })
+
     $('#delete-this-project').on('click', () => {
       $.ajax({
         method: "delete",

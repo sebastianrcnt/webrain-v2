@@ -121,6 +121,7 @@ export const getProjectPage: RequestHandler = async (req, res) => {
   const projectId = req.params.projectId;
   const project: IProject = await ProjectModel.findOne({ id: projectId })
     .populate("author")
+    .populate("participants")
     .lean();
   let experiments: IExperiment[] = await ExperimentModel.find({})
     .populate("project")
@@ -131,11 +132,23 @@ export const getProjectPage: RequestHandler = async (req, res) => {
   let assignedExperiments = experiments.filter((experiment) => {
     return experiment.project?._id.equals(project._id);
   });
+  let assignedParticipants = project.participants;
+  let assignedParticipantsEmails = assignedParticipants.map(
+    (participant) => participant
+  );
+  let users = await UserModel.find({}).lean();
+  let unassignedParticipants = users.filter(
+    (user) => !assignedParticipantsEmails.includes(user.email)
+  );
   res.render("admin/pages/project", {
     layout: "admin",
     project,
     unassignedExperiments,
     assignedExperiments,
+    users,
+    assignedParticipants,
+    unassignedParticipants,
+    assignedParticipantsEmails,
   });
 };
 
@@ -174,10 +187,13 @@ export const updateProject: RequestHandler = async (req, res) => {
   let { name, description, agreement, public: p } = req.body;
   const result = await ProjectModel.updateOne(
     { id: projectId },
-    { name, description, agreement, public: p === '1' }
+    { name, description, agreement, public: p === "1" }
   );
   if (req.file) {
-    await ProjectModel.updateOne({ id: projectId }, { coverFileId: req.file.filename });
+    await ProjectModel.updateOne(
+      { id: projectId },
+      { coverFileId: req.file.filename }
+    );
   }
   sendMessageWithRedirectionUrl(
     res,
@@ -195,9 +211,21 @@ export const getUsersPage: RequestHandler = async (req, res) => {
 export const getUserPage: RequestHandler = async (req, res) => {
   const userEmail = req.params.userEmail;
   const user: IUser = await UserModel.findOne({ email: userEmail }).lean();
+  const assignedProjects = await ProjectModel.find({
+    participants: { $in: user._id },
+  })
+    .populate("author")
+    .lean();
+  const unassignedProjects = await ProjectModel.find({
+    participants: { $nin: user._id },
+  })
+    .populate("author")
+    .lean();
   res.render("admin/pages/user", {
     layout: "admin",
     user,
+    assignedProjects,
+    unassignedProjects,
   });
 };
 
@@ -209,7 +237,7 @@ export const updateUser: RequestHandler = async (req, res) => {
   sendMessageWithRedirectionUrl(
     res,
     "성공적으로 수정되었습니다",
-    "/admin/projects"
+    "/admin/users"
   );
 };
 
@@ -426,4 +454,13 @@ export const getParticipationsPage: RequestHandler = async (req, res) => {
 
 export const getNewParticipationsPage: RequestHandler = async (req, res) => {
   res.render("admin/pages/participations-new", { layout: "admin" });
+};
+
+export const getAssignPage: RequestHandler = async (req, res) => {
+  const users = await UserModel.find({}).lean();
+  res.render("admin/pages/assign", { layout: "admin", users });
+};
+
+export const getHomeEditPage: RequestHandler = async (req, res) => {
+  throw new UnimplementedExceptionSync();
 };

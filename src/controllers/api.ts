@@ -5,6 +5,7 @@ import {
   IExperiment,
   IExperimentCreation,
   insertSampleToDatabase,
+  IProject,
   IProjectGroup,
   IUser,
   ParticipationModel,
@@ -186,10 +187,29 @@ export const duplicateExperiment: RequestHandler = async (req, res) => {
 };
 
 // todo - impolement assignment
-export const assignParticipantToProject: RequestHandler = (req, res) => {
-  throw new UnimplementedExceptionAsync();
+export const assignParticipantToProject: RequestHandler = async (req, res) => {
+  const { participantEmail, projectId } = req.query;
+  const participant = await UserModel.findOne({ email: participantEmail });
+  if (participant) {
+    await ProjectModel.updateOne(
+      { id: projectId },
+      { $push: { participants: participant } }
+    );
+  }
+  res.json({ participantEmail, projectId });
 };
 
-export const disassignParticipantToProject: RequestHandler = (req, res) => {
-  throw new UnimplementedExceptionAsync();
+export const disassignParticipantToProject: RequestHandler = async (
+  req,
+  res
+) => {
+  const { participantEmail, projectId } = req.query;
+  const participant = await UserModel.findOne({ email: participantEmail });
+  if (participant) {
+    await ProjectModel.updateOne(
+      { id: projectId },
+      { $pull: { participants: participant._id } }
+    );
+  }
+  res.json({ participantEmail, projectId });
 };
