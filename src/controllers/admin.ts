@@ -91,10 +91,6 @@ export const createProjectGroup: RequestHandler = async (req, res) => {
 
 export const updateProjectGroup: RequestHandler = async (req, res) => {
   const { id, name, description } = req.body;
-  console.log({
-    body: req.body,
-    file: req.file,
-  });
   await ProjectGroupModel.updateOne({ id }, { name, description });
   if (req.file) {
     await ProjectGroupModel.updateOne(
@@ -173,14 +169,15 @@ export const createProject: RequestHandler = async (
 };
 
 export const updateProject: RequestHandler = async (req, res) => {
-  const { id } = req.params;
+  const { projectId } = req.params;
+
   let { name, description, agreement, public: p } = req.body;
-  await ProjectModel.updateOne(
-    { id },
-    { name, description, agreement, public: !!p }
+  const result = await ProjectModel.updateOne(
+    { id: projectId },
+    { name, description, agreement, public: p === '1' }
   );
   if (req.file) {
-    await ProjectModel.updateOne({ id }, { coverFileId: req.file.filename });
+    await ProjectModel.updateOne({ id: projectId }, { coverFileId: req.file.filename });
   }
   sendMessageWithRedirectionUrl(
     res,
