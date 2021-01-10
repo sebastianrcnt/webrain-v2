@@ -23,6 +23,7 @@ import fs from "fs";
 import path from "path";
 import keygen from "../utils/keygen";
 import fse from "fs-extra";
+import { RequestWithSession } from "../types/interfaces/session";
 
 export const deleteProjectGroup: RequestHandler = async (req, res) => {
   const projectGroupId = req.params.projectGroupId;
@@ -149,13 +150,15 @@ export const disassignExperimentToProject: RequestHandler = async (
 
 // todo - duplicate project on template
 // todo - open experiment to user
-export const duplicateExperiment: RequestHandler = async (req, res) => {
+export const duplicateExperiment: RequestHandler = async (
+  req: RequestWithSession,
+  res
+) => {
   const experimentId = req.query.experimentId;
-  const userEmail = req.query.userEmail;
   const experiment: IExperiment = await ExperimentModel.findOne({
     id: experimentId,
   }).lean();
-  const user: IUser = await UserModel.findOne({ email: userEmail }).lean();
+  const user: IUser = req.session.user;
   if (user && experiment) {
     // copy experiment files
     const newKey = keygen();
@@ -163,7 +166,10 @@ export const duplicateExperiment: RequestHandler = async (req, res) => {
     // copy zipfile
     fse.copySync(`uploads/${experiment.id}`, `uploads/${newKey}`);
     fse.copySync(`uploads/${experiment.coverFileId}`, `uploads/${newKey}`);
-    fse.copySync(`uploads/source_${experiment.id}`, `uploads/${newKey}`);
+    fse.copySync(
+      `uploads/source_${experiment.id}/`,
+      `uploads/source_${newKey}`
+    );
     const newExperiment: IExperimentCreation = {
       id: newKey,
       name: experiment.name,
@@ -173,7 +179,7 @@ export const duplicateExperiment: RequestHandler = async (req, res) => {
       coverFileId: newCoverFileId,
       instructionsJson: experiment.instructionsJson,
       public: false,
-      author: null,
+      author: req.session.user._id,
       tags: experiment.tags,
     };
     await ExperimentModel.create(newExperiment);
@@ -218,5 +224,5 @@ export const editHome: RequestHandler = async (req, res) => {
   const { html } = req.body;
   const homeHtmlPath = path.resolve("buffer/home.html");
   fs.writeFileSync(homeHtmlPath, html);
-  res.send("Done!")
+  res.send("Done!");
 };

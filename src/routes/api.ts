@@ -58,7 +58,6 @@ ApiRouter.delete(
 ApiRouter.get(
   "/experiments/duplicate",
   query("experimentId").exists(),
-  query("userEmail").exists(),
   asyncHandler(ApiControllers.duplicateExperiment)
 );
 

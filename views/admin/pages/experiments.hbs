@@ -10,11 +10,12 @@
               <th>ID</th>
               <th>이름</th>
               <th>연구자</th>
+              <th>공개여부</th>
               <th>액션</th>
             </tr>
           </thead>
           <tbody class="is-vcentered">
-            {{#each experiments as |experiment|}}
+            {{#each myExperiments as |experiment|}}
             <tr>
               <td>
                 {{ experiment.id }}
@@ -26,6 +27,9 @@
                 <a href="/admin/users/{{ experiment.author.email }}">
                   {{ experiment.author.name }}
                 </a>
+              </td>
+              <td>
+                {{ ternary experiment.public "예" "아니오" }}
               </td>
               <td>
                 <a href="/admin/experiments/{{ experiment.id }}" class="button is-info is-small is-centered">
@@ -54,6 +58,7 @@
               <th>ID</th>
               <th>이름</th>
               <th>연구자</th>
+              <th>공개여부</th>
               <th>액션</th>
             </tr>
           </thead>
@@ -70,6 +75,9 @@
                 <a href="/admin/users/{{ experiment.author.email }}">
                   {{ experiment.author.name }}
                 </a>
+              </td>
+              <td>
+                {{ ternary experiment.public "예" "아니오" }}
               </td>
               <td>
                 <a href="/admin/experiments/{{ experiment.id }}" class="button is-info is-small is-centered">
@@ -110,7 +118,8 @@
       const experimentId = $(event.target).attr("data-experiment-id");
       const result = confirm("사본을 생성합니다. 생성된 사본은 연구자님 소유이며 이름은 <원본 실험 제목> + copy입니다.\n");
       if (result) {
-
+        $.ajax({ url: "/api/experiments/duplicate", method: 'get', data: { experimentId } })
+          .then(res => alert('사본이 생성되었습니다'))
       }
     })
   });

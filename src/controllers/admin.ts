@@ -110,7 +110,16 @@ export const getProjectsPage: RequestHandler = async (
   req: RequestWithSession,
   res
 ) => {
-  const projects = await ProjectModel.find({}).populate("author").lean();
+  let projects = await ProjectModel.find({}).populate("author").lean();
+  if (req.session.user.level < 200) { // under admin: no unpublic experiments
+    projects = projects.filter((project: IProject) => {
+      if (project.author) {
+        return project.author._id.equals(req.session.user._id) || project.public
+      } else {
+        return true
+      }
+    })
+  }
   const myProjects = projects.filter((project: IProject) =>
     project.author._id.equals(req.session.user._id)
   );
@@ -247,12 +256,21 @@ export const getExperimentsPage: RequestHandler = async (
   req: RequestWithSession,
   res
 ) => {
-  const experiments = await ExperimentModel.find({})
+  let experiments = await ExperimentModel.find({})
     .populate("project")
     .populate("author")
     .lean();
+  if (req.session.user.level < 200) { // under admin: no unpublic experiments
+    experiments = experiments.filter((experiment: IExperiment) => {
+      if (experiment.author) {
+        return experiment.author._id.equals(req.session.user._id) || experiment.public
+      } else {
+        return true
+      }
+    })
+  }
   let myExperiments = experiments.filter((experiment) =>
-    experiment.author._id.equals(req.session?.user._id)
+    experiment.author?._id.equals(req.session?.user._id)
   );
   res.render("admin/pages/experiments", {
     layout: "admin",

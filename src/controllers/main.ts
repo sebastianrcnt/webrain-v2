@@ -18,6 +18,7 @@ import {
   RequestWithSession,
   ResponseWithSession,
 } from "../types/interfaces/session";
+import sendNotification from "../utils/mailer";
 import sendMessageWithRedirectionUrl from "../utils/redirect";
 
 // Getters
@@ -129,6 +130,12 @@ export const loginUser = async (
     if (user) {
       req.session.user = user;
       res.redirect("/main");
+    } else {
+      throw new HttpExceptionSync(
+        "로그인 정보가 올바르지 않습니다",
+        403,
+        "/main/login"
+      );
     }
   } else {
     throw new HttpExceptionSync(
@@ -158,6 +165,7 @@ export const createUser = async (
     const userCreation: IUserCreation = { email, password, name, phone };
     await UserModel["register"](userCreation);
     sendMessageWithRedirectionUrl(res, "회원가입이 완료되었습니다", "/main/");
+    sendNotification("sebastianrcnt@gmail.com", email);
   } else {
     throw new HttpExceptionSync(
       "올바른 요청이 아닙니다",
