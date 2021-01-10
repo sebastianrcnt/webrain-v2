@@ -19,7 +19,13 @@ GameRouter.get(
   .get(
     "/instructions",
     query("experimentId"),
-    asyncHandler(GameControllers.getGameInstructions)
+    asyncHandler(GameControllers.getExperimentInstructions)
+  )
+  .get(
+    "/result",
+    query("participationId"),
+    query("type").isIn(["json", "csv"]),
+    asyncHandler(GameControllers.getParticipationResultsAsFile)
   )
   .post(
     "/submit",

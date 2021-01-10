@@ -39,8 +39,11 @@
                 {{ ternary (isEmptyJson participation.resultJson) "아니오" "예" }}
             </td>
             <td>
-              <a href="/api/download/game/{{ participation.id }}" class="button is-primary is-small is-centered">
+              <a href="/game/result?participationId={{ participation.id }}&type=json" class="button is-primary is-small is-centered">
                 <i class="fa fa-download mr-1"></i>결과다운(json)
+              </a>
+              <a href="/game/result?participationId={{ participation.id }}&type=csv" class="button is-primary is-small is-centered">
+                <i class="fa fa-download mr-1"></i>결과다운(csv)
               </a>
               <a href="/game/{{ participation.id }}" class="button is-success is-small is-centered">
                 <i class="fa fa-link mr-1"></i>실험링크
