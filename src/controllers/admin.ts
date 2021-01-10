@@ -456,10 +456,6 @@ export const getNewParticipationsPage: RequestHandler = async (req, res) => {
   res.render("admin/pages/participations-new", { layout: "admin" });
 };
 
-export const getAssignPage: RequestHandler = async (req, res) => {
-  const users = await UserModel.find({}).lean();
-  res.render("admin/pages/assign", { layout: "admin", users });
-};
 
 export const getHomeEditPage: RequestHandler = async (req, res) => {
   throw new UnimplementedExceptionSync();

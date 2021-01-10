@@ -7,3 +7,6 @@ uploads/**
 
 *.json
 **/*.swp
+
+buffer/game-result.csv
+buffer/game-result.json
