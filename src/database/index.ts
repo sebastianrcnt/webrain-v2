@@ -149,7 +149,7 @@ export const ParticipationSchema: Schema = new Schema({
   experiment: { type: ObjectId, required: true, ref: "Experiment" },
   participant: { type: ObjectId, required: true, ref: "User" },
   timestamp: { type: Number, required: false },
-  resultJson: { type: String, required: false },
+  resultJson: { type: String, required: false, default: '{}' },
 });
 
 export interface IParticipation extends Document {
@@ -157,7 +157,15 @@ export interface IParticipation extends Document {
   experiment: IExperiment["_id"];
   participant: IUser["_id"];
   timestamp: number;
-  resultJson: number;
+  resultJson?: string;
+}
+
+export interface IParticipationCreation {
+  id: string;
+  experiment: IExperiment["_id"];
+  participant: IUser["_id"];
+  timestamp: number;
+  resultJson?: string;
 }
 
 export const ParticipationModel = mongoose.model(

@@ -10,6 +10,7 @@
             <th>참여자</th>
             <th>프로젝트</th>
             <th>실험</th>
+            <th>완료여부</th>
             <th>액션</th>
           </tr>
         </thead>
@@ -33,6 +34,9 @@
               <a href="/admin/experiments/{{ participation.experiment.id }}">
                 {{ participation.experiment.name }}
               </a>
+            </td>
+            <td>
+                {{ ternary (isEmptyJson participation.resultJson) "아니오" "예" }}
             </td>
             <td>
               <a href="/api/download/game/{{ participation.id }}" class="button is-primary is-small is-centered">

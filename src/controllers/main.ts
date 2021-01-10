@@ -7,6 +7,7 @@ import {
   IProjectGroup,
   IUser,
   IUserCreation,
+  ParticipationModel,
   ProjectGroupModel,
   ProjectModel,
   UserModel,
@@ -34,13 +35,17 @@ export const getProjectGroupsPage: RequestHandler = async (req, res) => {
   });
 };
 
-export const getProjectGroupPage: RequestHandler = async (req, res) => {
+export const getProjectGroupPage: RequestHandler = async (
+  req: RequestWithSession,
+  res
+) => {
   const projectGroupId: string = req.params.projectGroupId;
   const projectGroup: IProjectGroup = (await ProjectGroupModel.findOne({
     id: projectGroupId,
   }).lean()) as IProjectGroup;
   const projects: IProject[] = (await ProjectModel.find({
     projectGroup: projectGroup._id,
+    participants: { $in: req.session.user._id },
   }).lean()) as IProject[];
   if (projectGroup) {
     res.render("main/pages/project-group", {
@@ -64,9 +69,23 @@ export const getProjectPage: RequestHandler = async (req, res) => {
   let experiments = (await ExperimentModel.find({
     project: project._id,
   }).lean()) as IExperiment[];
+  let completedExperiments: IExperiment[] = [];
+  let incompletedExperiments: IExperiment[] = [];
+  for (let experiment of experiments) {
+    if ((await ParticipationModel.count({ experiment: experiment._id })) > 0) {
+      completedExperiments.push(experiment);
+    } else {
+      incompletedExperiments.push(experiment);
+    }
+  }
 
   if (project) {
-    res.render("main/pages/project", { project, experiments });
+    res.render("main/pages/project", {
+      project,
+      experiments,
+      completedExperiments,
+      incompletedExperiments,
+    });
   } else {
     throw new HttpExceptionSync(
       `해당 id를 가진 프로젝트를 찾지 못했습니다`,

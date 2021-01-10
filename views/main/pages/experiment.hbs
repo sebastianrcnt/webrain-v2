@@ -1,23 +1,22 @@
 <link rel="stylesheet" href="/css/initial.css" />
 <div class="wrap-all">
   {{> header}}
-  <% const game=result; %>
-    <section class="section section-1">
-      <div class="image"></div>
-      <div class="instruction">
-        <p class="title">
-          {{ experiment.name }}
-        </p>
-        <p class="text">
-          {{ experiment.name }}
-        </p>
-        <p class="text">
-          {{ experiment.agreement }}
-        </p>
-        <a href="/game/<%= game.id %>"><button class="btn">동의하고 시작하기</button></a>
-      </div>
-    </section>
-    {{> footer}}
+  <section class="section section-1">
+    <div class="image"></div>
+    <div class="instruction">
+      <p class="title">
+        {{ experiment.name }}
+      </p>
+      <p class="text">
+        {{ experiment.name }}
+      </p>
+      <p class="text">
+        {{ experiment.project.agreement }}
+      </p>
+      <a href="/game/new?experimentId={{experiment.id}}"><button class="btn">동의하고 시작하기</button></a>
+    </div>
+  </section>
+  {{> footer}}
 </div>
 <!-- script jquery link -->
 <script src="../js/basic.js"></script>

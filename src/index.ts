@@ -62,6 +62,9 @@ const handlebars = exphbs.create({
     isUserAdminOrResearcher(user) {
       return user ? user.level >= 100 : false;
     },
+    isEmptyJson(json) {
+      return json === '{}'
+    }
   },
 });
 
