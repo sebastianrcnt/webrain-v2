@@ -456,7 +456,14 @@ export const getNewParticipationsPage: RequestHandler = async (req, res) => {
   res.render("admin/pages/participations-new", { layout: "admin" });
 };
 
-
 export const getHomeEditPage: RequestHandler = async (req, res) => {
-  throw new UnimplementedExceptionSync();
+  let html = "";
+  const homeHtmlPath = path.resolve("buffer/home.html");
+  const homeDefaultHtmlPath = path.resolve("buffer/home.default.html");
+  if (fs.existsSync(homeHtmlPath)) {
+    html = fs.readFileSync(homeHtmlPath, { encoding: "utf-8" });
+  } else {
+    html = fs.readFileSync(homeDefaultHtmlPath, { encoding: "utf-8" });
+  }
+  res.render("admin/pages/edit-home", { layout: "admin", html });
 };

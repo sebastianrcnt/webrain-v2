@@ -1,5 +1,7 @@
 import express, { Router } from "express";
 import { body } from "express-validator";
+import fs from "fs"
+import path from "path";
 
 // controllers
 import * as MainControllers from "../controllers/main";
@@ -39,7 +41,7 @@ MainRouter.get("/login", MainControllers.getLoginPage)
 
 // Only For Authenticated Users
 MainRouter.use(AuthorizationGates.levelAuthorizationGate(0, "/main/login"))
-  .get("/", asyncHandler(MainControllers.getProjectGroupsPage))
+  .get("/project-groups/", asyncHandler(MainControllers.getProjectGroupsPage))
   .get(
     "/project-groups/:projectGroupId",
     asyncHandler(MainControllers.getProjectGroupPage)
@@ -50,5 +52,17 @@ MainRouter.use(AuthorizationGates.levelAuthorizationGate(0, "/main/login"))
     asyncHandler(MainControllers.getExperimentReadyPage)
   )
   .get("/logout", asyncHandler(MainControllers.logoutUser));
+
+MainRouter.get("/", (req, res) => {
+  let html = ""
+  const homeHtmlPath = path.resolve("buffer/home.html");
+  const homeDefaultHtmlPath = path.resolve("buffer/home.default.html");
+  if (fs.existsSync(homeHtmlPath)) {
+    html = fs.readFileSync(homeHtmlPath, { encoding: "utf-8" });
+  } else {
+    html = fs.readFileSync(homeDefaultHtmlPath, { encoding: "utf-8" });
+  }
+  res.render("main/pages/index", { html });
+})
 
 export default MainRouter;

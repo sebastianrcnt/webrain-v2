@@ -213,3 +213,10 @@ export const disassignParticipantToProject: RequestHandler = async (
   }
   res.json({ participantEmail, projectId });
 };
+
+export const editHome: RequestHandler = async (req, res) => {
+  const { html } = req.body;
+  const homeHtmlPath = path.resolve("buffer/home.html");
+  fs.writeFileSync(homeHtmlPath, html);
+  res.send("Done!")
+};

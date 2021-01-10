@@ -74,4 +74,10 @@ ApiRouter.get(
   asyncHandler(ApiControllers.disassignParticipantToProject)
 );
 
+ApiRouter.post(
+  "/edit-home",
+  body("html").exists(),
+  asyncHandler(ApiControllers.editHome)
+);
+
 export default ApiRouter;
