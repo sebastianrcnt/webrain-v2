@@ -116,7 +116,8 @@ app.use(
 
 app.use(IndexRouter);
 
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
+console.log(process.env.port, PORT)
 
 app.listen(PORT, () => {
   console.log("🧠  [Monet Webrain] ");
