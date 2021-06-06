@@ -14,3 +14,6 @@ Check out This [Documentation](https://sebastianrcnt.github.io/webrain-docs/)
 3. TypeScript
 4. Handlebars Template Engine
 5. Axios.js for Ajax
+
+## Version History
+- Initial Version [1.0](https://github.com/sebastianrcnt/webrain.legacy)
