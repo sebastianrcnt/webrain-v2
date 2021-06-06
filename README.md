@@ -5,3 +5,4 @@
 - Mongoose ORM
 - Express.js on Node.js
 - Handlebars as template engine
+- TypeScript
